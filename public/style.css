@@ -1,0 +1,39 @@
+#app {
+    height: 100%;
+    width: 100%;
+}
+
+/* PLAYER HAND CONTAINER */
+.playerHand-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+}
+
+.playerHand-container h5 {
+    margin: 0;
+}
+
+
+/* COMPUTER HANDS CONTAINER */
+.compHands-container {
+    display: flex;
+    justify-content: center;
+    height: 400px;
+}
+
+/* COMPUTER HANDS */
+.compTwo-hand {
+    transform: rotate(90deg);
+    transform-origin: 30% 50%;
+}
+
+.compThree-hand {
+
+}
+
+.compFour-hand {
+    transform: rotate(-90deg);
+    transform-origin: 70% 50%;
+}
