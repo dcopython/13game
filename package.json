@@ -20,8 +20,10 @@
     "webpack-cli": "^3.3.12"
   },
   "dependencies": {
+    "axios": "^0.20.0",
     "cardsJS": "^1.1.1",
     "express": "^4.17.1",
+    "mongodb": "^3.6.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1"
   }

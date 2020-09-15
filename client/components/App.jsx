@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PlayerHand from './PlayerHand.jsx';
 import CompHands from './CompHands.jsx';
 import PlayedCardsPile from './PlayedCardsPile.jsx';
+import axios from 'axios';
 import cards from '../cards.js';
 
 const App = () => {
@@ -14,7 +15,8 @@ const App = () => {
     const [compFourCards, setCompFourCards] = useState([]);
 
     // gameplay state
-    const [currentPlayer, setCurrentPlayer] = useState(0);
+    const [currentPlayer, setCurrentPlayer] = useState(null);
+    const [updatePlayerTurn, setUpdatePlayerTurn] = useState(false);
 
     // const shuffleDeck = () => {
     //     const shuffledDeck = cards;
@@ -41,11 +43,12 @@ const App = () => {
 
     const changePlayerTurn = () => {
         // turns always go clockwise 1 to 4
-        if (currentPlayer === 3) {
-            setCurrentPlayer(0);
-        } else {
-            setCurrentPlayer(prevState => prevState + 1);
-        }
+        // if (currentPlayer === 3) {
+        //     setCurrentPlayer(0);
+        // } else {
+        //     setCurrentPlayer(prevState => prevState + 1);
+        // }
+        setUpdatePlayerTurn(true);
     };
 
     // const startGame = () => {
@@ -298,8 +301,22 @@ const App = () => {
         });
 
         // change to next player
-        changePlayerTurn();
+         if (currentPlayer === 3) {
+            setCurrentPlayer(0);
+        } else {
+            setCurrentPlayer(prevState => prevState + 1);
+        }
     }, [decks]);
+
+    useEffect(() => {
+        if (currentPlayer === 3) {
+            setCurrentPlayer(0);
+        } else {
+            setCurrentPlayer(prevState => prevState + 1);
+        }
+
+        setUpdatePlayerTurn(false);
+    }, [updatePlayerTurn])
 
     return (
         <div>
