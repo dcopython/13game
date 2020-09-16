@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PlayerHand from './PlayerHand.jsx';
 import CompHands from './CompHands.jsx';
 import PlayedCardsPile from './PlayedCardsPile.jsx';
-import axios from 'axios';
+import UserProfile from './UserProfile.jsx';
 import cards from '../cards.js';
 
 const App = () => {
@@ -43,12 +43,12 @@ const App = () => {
 
     const changePlayerTurn = () => {
         // turns always go clockwise 1 to 4
-        // if (currentPlayer === 3) {
-        //     setCurrentPlayer(0);
-        // } else {
-        //     setCurrentPlayer(prevState => prevState + 1);
-        // }
-        setUpdatePlayerTurn(true);
+        if (currentPlayer === 3) {
+            setCurrentPlayer(0);
+        } else {
+            setCurrentPlayer(currentPlayer + 1);
+        }
+        // setUpdatePlayerTurn(true);
     };
 
     // const startGame = () => {
@@ -161,6 +161,8 @@ const App = () => {
         if (currentCardValue > prevCardValue) {
             // play that card
             playSingleCard(cardToBePlayed, currentPlayer)
+
+            return true;
         } else {
             // card is not a valid play
             // display message to tell user to pick another card
@@ -172,6 +174,8 @@ const App = () => {
             setTimeout(() => {
                 alertDiv.innerText = '';
             }, 2000);
+
+            return false;
         }
 
     };
@@ -230,7 +234,7 @@ const App = () => {
 
         // computer will pass if sortedHand is empty
         if (sortedHand.length === 0) {
-            displayAlert(`Player ${currentPlayer} has decided to pass.`);
+            displayAlert(`Player ${currentPlayer + 1} has decided to pass.`);
 
             changePlayerTurn();
         } else { // otherwise, take card with lowest difference, remove it from current hand and place into played pile
@@ -248,12 +252,18 @@ const App = () => {
 
     // handle player playing a card
     const handleCardClick = (card) => {
+        let validPlay = false;
+
         // check if it's player 1's turn
+        if (currentPlayer === 0) {
+           validPlay = cardComparison(card);
 
-        cardComparison(card);
+           if (validPlay === true) {
+               changePlayerTurn();
+           }
+        }
 
-        // move to next turn
-        changePlayerTurn();
+
     }
 
     // shuffle deck and deal cards
@@ -289,7 +299,7 @@ const App = () => {
             deck.forEach((card, j) => {
                 if (card === '3S') {
                     // set the player that has it as starting player
-                    setCurrentPlayer(i);
+                    setCurrentPlayer(i + 1);
 
                     // remove card from deck
                     deck.splice(j, 1);
@@ -300,23 +310,24 @@ const App = () => {
             })
         });
 
-        // change to next player
-         if (currentPlayer === 3) {
-            setCurrentPlayer(0);
-        } else {
-            setCurrentPlayer(prevState => prevState + 1);
-        }
+        // // change to next player
+        //  if (currentPlayer === 3) {
+        //     setCurrentPlayer(0);
+        // } else {
+        //     setCurrentPlayer(prevState => prevState + 1);
+        // }
+
     }, [decks]);
 
-    useEffect(() => {
-        if (currentPlayer === 3) {
-            setCurrentPlayer(0);
-        } else {
-            setCurrentPlayer(prevState => prevState + 1);
-        }
+    // useEffect(() => {
+    //     if (currentPlayer === 3) {
+    //         setCurrentPlayer(0);
+    //     } else {
+    //         setCurrentPlayer(prevState => prevState + 1);
+    //     }
 
-        setUpdatePlayerTurn(false);
-    }, [updatePlayerTurn])
+    //     setUpdatePlayerTurn(false);
+    // }, [updatePlayerTurn])
 
     return (
         <div>
@@ -326,8 +337,11 @@ const App = () => {
                 <div className='game-status'>{`Player ${currentPlayer + 1}'s Turn`}</div>
                 <div id='alert'></div>
             </div>
-            {playedCards.length === 0 ? 'Loading' : <PlayedCardsPile pile={playedCards} />}
-            <button onClick={playCompHand}>Computer Turn</button>
+            <div className='playedPile'>
+                {playedCards.length === 0 ? 'Loading' : <PlayedCardsPile pile={playedCards} />}
+            </div>
+            <button className='computerTurn-btn' onClick={playCompHand}>Computer Turn</button>
+            <UserProfile />
         </div>
     )
 }

@@ -3,6 +3,57 @@
     width: 100%;
 }
 
+/* USER PROFILE */
+.userProfile {
+    position: fixed;
+    top: 0%;
+    left: 85%;
+}
+
+    /* Friends List */
+    .friendList h5 {
+        margin-bottom: 0;
+    }
+
+    .addFriend {
+        margin-bottom: 10px;
+    }
+
+    .friend {
+        display: flex;
+    }
+
+    .friend p {
+        margin: 0;
+    }
+
+    .friend span {
+        margin-right: 5px;
+        margin-top: 4px;
+    }
+
+    .dot {
+        height: 10px;
+        width: 10px;
+        background-color: lightgreen;
+        border-radius: 50%;
+    }
+
+/* MESSAGES */
+.messages {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+}
+
+/* PLAYED PILE */
+.playedPile {
+    position: fixed;
+    left: 48%;
+    top: 26%;
+}
+
 /* PLAYER HAND CONTAINER */
 .playerHand-container {
     display: flex;
@@ -21,19 +72,38 @@
     display: flex;
     justify-content: center;
     height: 400px;
+    width: auto;
 }
 
 /* COMPUTER HANDS */
 .compTwo-hand {
     transform: rotate(90deg);
-    transform-origin: 30% 50%;
+    transform-origin: left bottom;
+    height: 110px;
+    position: fixed;
+    left: 680px;
+    top: 10px;
 }
 
 .compThree-hand {
-
+    height: 110px;
+    position: fixed;
+    top: 0px;
+    left: 820px;
 }
 
 .compFour-hand {
     transform: rotate(-90deg);
-    transform-origin: 70% 50%;
+    transform-origin: right bottom;
+    height: 110px;
+    position: fixed;
+    left: 950px;
+    top: 10px;
+}
+
+/* COMPUTER TURN BUTTON */
+.computerTurn-btn {
+    position: fixed;
+    top: 0%;
+    left: 0%;
 }

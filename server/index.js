@@ -18,7 +18,9 @@ app.get('/cards/:id', (req, res) => {
 
 app.get('/api/friends', (req, res) => {
     getFriends((error, result) => {
-        if (error) throw error;
+        if (error) {
+            res.sendStatus(500);
+        }
 
         res.status(200).send(result);
     })
