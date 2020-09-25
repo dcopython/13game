@@ -10,6 +10,7 @@ import playCompHand from '../gameplay/playCompHand.js';
 
 const App = () => {
     // game setup state
+    const [isDealing, setIsDealing] = useState(true);
     const [decks, setDecks] = useState([]);
     const [playedCards, setPlayedCards] = useState([]);
 
@@ -26,20 +27,19 @@ const App = () => {
             shuffledDeck[j] = temp;
         }
 
-        setDecks(shuffleDeck);
+        return shuffledDeck;
     };
 
     const dealCards = (deck) => {
-        const decksCopy = decks;
         const hands = [];
         let i = 0;
-        let n = decks.length;
+        let n = deck.length;
 
         while (i < n) {
-            hands.push(decksCopy.slice(i, i += 13));
+            hands.push(deck.slice(i, i += 13));
         }
 
-        setDecks(hands);
+        return hands;
     };
 
     const changePlayerTurn = () => {
@@ -112,36 +112,22 @@ const App = () => {
                changePlayerTurn();
            }
         }
-
-
     }
 
-    // shuffle deck and deal cards
     useEffect(() => {
-        const shuffledDeck = cards;
+        // shuffle deck and split into 4 hands
+        let deck = shuffleDeck();
+        deck = dealCards(deck);
 
-        for (let i = shuffledDeck.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * i);
-            const temp = shuffledDeck[i];
-            shuffledDeck[i] = shuffledDeck[j];
-            shuffledDeck[j] = temp;
-        }
-
-        // deal cards to player
-        setPlayerCards(shuffledDeck.slice(0, 13));
-
-        // deal cards to computer players
-        setCompTwoCards(shuffledDeck.slice(13, 26));
-        setCompThreeCards(shuffledDeck.slice(26, 39));
-        setCompFourCards(shuffledDeck.slice(39, 52));
-        
+        setDecks(deck);
+        setIsDealing(false);
     },[]);
 
 
     return (
         <div>
-            <CompHands cards2={compTwoCards} cards3={compThreeCards} cards4={compFourCards} />
-            <PlayerHand cards={playerCards} handleCardClick={handleCardClick} />
+            {/* <CompHands /> */}
+            { isDealing === true ? 'Dealing cards...' : <PlayerHand cards={decks[0]} handleCardClick={handleCardClick} />}
             <div className='messages'>
                 <div className='game-status'>{`Player ${currentPlayer + 1}'s Turn`}</div>
                 <div id='alert'></div>
