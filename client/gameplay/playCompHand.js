@@ -1,4 +1,4 @@
-export default playCompHand = () => {
+const playCompHand = () => {
     const compHandList = {
         1: compTwoCards,
         2: compThreeCards,
@@ -67,3 +67,5 @@ export default playCompHand = () => {
         changePlayerTurn();
     }
 };
+
+export default playCompHand;

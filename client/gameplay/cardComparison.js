@@ -1,5 +1,5 @@
 // check cards for valid move
-export default cardComparison = (cardToBePlayed) => {
+const cardComparison = (cardToBePlayed) => {
     const prevCard = playedCards[playedCards.length - 1];
 
     // check value and suit of current card
@@ -33,3 +33,5 @@ export default cardComparison = (cardToBePlayed) => {
     }
 
 };
+
+export default cardComparison;

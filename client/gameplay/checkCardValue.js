@@ -1,5 +1,5 @@
 // find point value of a single card
-export default checkCardValue = (card) => {
+const checkCardValue = (card) => {
     const faceValue = {
         "3": 30,
         "4": 40,
@@ -42,3 +42,5 @@ export default checkCardValue = (card) => {
 
     return points;
 }
+
+export default checkCardValue;
