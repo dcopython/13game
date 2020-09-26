@@ -6,13 +6,15 @@ import UserProfile from './UserProfile.jsx';
 import cards from '../cards.js';
 import cardComparison from '../gameplay/cardComparison.js';
 import checkCardValue from '../gameplay/checkCardValue.js';
-import playCompHand from '../gameplay/playCompHand.js';
 
 const App = () => {
     // game setup state
     const [isDealing, setIsDealing] = useState(true);
     const [decks, setDecks] = useState([]);
-    const [playedCards, setPlayedCards] = useState([]);
+    const [playedCards, setPlayedCards] = useState({
+        lastPlayedBy: null,
+        cards: []
+    });
 
     // gameplay state
     const [currentPlayer, setCurrentPlayer] = useState(null);
@@ -72,7 +74,10 @@ const App = () => {
                     deck.splice(j, 1);
 
                     // place deck into played pile
-                    setPlayedCards(['3S']);
+                    setPlayedCards({
+                        lastPlayedBy: i,
+                        cards: ['3S']
+                    });
 
                     // pass on deck number to function to assign next player
                     changePlayerTurn(i);
@@ -96,18 +101,22 @@ const App = () => {
 
     // takes in card to be played and current player
     // handles removing card from hand and moving to played pile
-    const playSingleCard = (currentCard, currentPlayer) => {
+    const playSingleCard = (card) => {
+        const hands = [...decks];
+
         // find position of current card in hand
-        const index = playerCards.indexOf(currentCard);
+        const index = hands[currentPlayer].indexOf(card);
 
         // splice current card from currentHand
-        playerCards.splice(index, 1);
+        hands[currentPlayer].splice(index, 1);
 
         // update currentPlayer hand
-        setPlayedCards([...playedCards, currentCard]);
+        setPlayedCards({
+            lastPlayedBy: currentPlayer,
+            cards: [...playedCards.cards, card]
+        })
 
-        // add current card to playedCards array
-        setPlayerCards([...playerCards]);
+        return hands;
     };
 
     // handle player playing a card
@@ -116,9 +125,11 @@ const App = () => {
 
         // check if it's player 1's turn
         if (currentPlayer === 0) {
-           validPlay = cardComparison(card);
+           validPlay = cardComparison(card, playedCards.cards);
 
            if (validPlay === true) {
+               let hands = playSingleCard(card);
+               setDecks(hands);
                changePlayerTurn();
            }
         }
@@ -134,16 +145,25 @@ const App = () => {
 
     return (
         <div>
-            { isDealing === true ? 'Dealing cards...' : <CompHands cards2={decks[1]} cards3={decks[2]} cards4={decks[3]} />}
+            { isDealing === true ? 'Dealing cards...' : 
+                <CompHands 
+                    decks={decks}
+                    setDecks={setDecks}
+                    playedCards={playedCards}
+                    setPlayedCards={setPlayedCards}
+                    currentPlayer={currentPlayer}
+                    displayAlert={displayAlert}
+                    changePlayerTurn={changePlayerTurn}
+                />
+            }
             { isDealing === true ? 'Dealing cards...' : <PlayerHand cards={decks[0]} handleCardClick={handleCardClick} />}
             <div className='messages'>
                 <div className='game-status'>{`Player ${currentPlayer + 1}'s Turn`}</div>
                 <div id='alert'></div>
             </div>
             <div className='playedPile'>
-                {playedCards.length === 0 ? 'Loading' : <PlayedCardsPile pile={playedCards} />}
+                {playedCards.cards.length === 0 ? 'Loading' : <PlayedCardsPile pile={playedCards.cards} />}
             </div>
-            <button className='computerTurn-btn' onClick={playCompHand}>Computer Turn</button>
         </div>
     )
 }

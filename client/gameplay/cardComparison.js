@@ -1,5 +1,7 @@
+import checkCardValue from './checkCardValue.js';
+
 // check cards for valid move
-const cardComparison = (cardToBePlayed) => {
+const cardComparison = (cardToBePlayed, playedCards) => {
     const prevCard = playedCards[playedCards.length - 1];
 
     // check value and suit of current card
@@ -13,9 +15,6 @@ const cardComparison = (cardToBePlayed) => {
 
     // compare last played card to the card about to be played to see if it's a valid move
     if (currentCardValue > prevCardValue) {
-        // play that card
-        playSingleCard(cardToBePlayed, currentPlayer)
-
         return true;
     } else {
         // card is not a valid play
