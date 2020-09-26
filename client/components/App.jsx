@@ -42,35 +42,45 @@ const App = () => {
         return hands;
     };
 
-    const changePlayerTurn = () => {
-        // turns always go clockwise 1 to 4
-        if (currentPlayer === 3) {
-            setCurrentPlayer(0);
+    const changePlayerTurn = (player) => {
+        // if initializing current player, assign directly, otherwise continue with rotation
+        if (player) {
+            if (player === 3) {
+                setCurrentPlayer(0);
+            } else {
+                setCurrentPlayer(player + 1);
+            }
         } else {
-            setCurrentPlayer(currentPlayer + 1);
+            if (currentPlayer === 3) {
+                setCurrentPlayer(0);
+            } else {
+                setCurrentPlayer(currentPlayer + 1);
+            }
         }
-        // setUpdatePlayerTurn(true);
     };
 
     const startGame = () => {
+        // shuffle cards and deal into four hands
+        let decks = shuffleDeck();
+        decks = dealCards(decks);
+
         // look through all decks for 3 of spades
         decks.forEach((deck, i) => {
             deck.forEach((card, j) => {
                 if (card === '3S') {
-                    // set the player that has it as starting player
-                    setCurrentPlayer(i);
-
                     // remove card from deck
                     deck.splice(j, 1);
 
-                    // place deck into middle pile
+                    // place deck into played pile
                     setPlayedCards(['3S']);
+
+                    // pass on deck number to function to assign next player
+                    changePlayerTurn(i);
                 }
             })
         });
 
-        // change to next player
-        changePlayerTurn();
+        return decks;
     }
 
     const displayAlert = (msg) => {
@@ -115,9 +125,7 @@ const App = () => {
     }
 
     useEffect(() => {
-        // shuffle deck and split into 4 hands
-        let deck = shuffleDeck();
-        deck = dealCards(deck);
+        const deck = startGame(deck);
 
         setDecks(deck);
         setIsDealing(false);
