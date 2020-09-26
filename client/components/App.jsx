@@ -126,7 +126,7 @@ const App = () => {
 
     return (
         <div>
-            {/* <CompHands /> */}
+            { isDealing === true ? 'Dealing cards...' : <CompHands cards2={decks[1]} cards3={decks[2]} cards4={decks[3]} />}
             { isDealing === true ? 'Dealing cards...' : <PlayerHand cards={decks[0]} handleCardClick={handleCardClick} />}
             <div className='messages'>
                 <div className='game-status'>{`Player ${currentPlayer + 1}'s Turn`}</div>
