@@ -15,9 +15,11 @@ const App = () => {
         lastPlayedBy: null,
         cards: []
     });
-
+    
     // gameplay state
     const [currentPlayer, setCurrentPlayer] = useState(null);
+    const [passedPlayers, setPassedPlayers] = useState(new Array(4).fill('false'));
+    const [openPlay, setOpenPlay] = useState(false);
 
     const shuffleDeck = () => {
         const shuffledDeck = cards;
@@ -61,6 +63,32 @@ const App = () => {
         }
     };
 
+    const passTurn = () => {
+        const passes = [...passedPlayers];
+
+        passes[currentPlayer] = true;
+
+        const countPasses = passes.reduce((total, bool) => {
+            if (bool === true) {
+                total += 1;
+            }
+
+            return total;
+        }, 0);
+
+        // if the three other players pass, set currentPlayer to whoever played the last card
+        // then change openPlay to true to signal that any card can be played
+        // and reset passes state
+        if (countPasses === 3) {
+            setCurrentPlayer(playedCards.lastPlayedBy);
+            setOpenPlay(true);
+            setPassedPlayers(new Array(4).fill('false'));
+        } else {
+            // update passed array with latest passed player
+            setPassedPlayers(passes);
+        }
+    }
+
     const startGame = () => {
         // shuffle cards and deal into four hands
         let decks = shuffleDeck();
@@ -88,10 +116,14 @@ const App = () => {
         return decks;
     }
 
-    const displayAlert = (msg) => {
+    const displayAlert = (msgType) => {
         const alertDiv = document.getElementById('alert');
+        const msgs = {
+            'pass': `Player ${currentPlayer + 1} has decided to pass`,
+            'open': 'All other players have passed, play any card combination'
+        };
 
-        alertDiv.innerText = `${msg}`;
+        alertDiv.innerText = `${msgs[msgType]}`;
 
         // clear alert message after 3 seconds
         setTimeout(() => {
@@ -119,22 +151,6 @@ const App = () => {
         return hands;
     };
 
-    // handle player playing a card
-    const handleCardClick = (card) => {
-        let validPlay = false;
-
-        // check if it's player 1's turn
-        if (currentPlayer === 0) {
-           validPlay = cardComparison(card, playedCards.cards);
-
-           if (validPlay === true) {
-               let hands = playSingleCard(card);
-               setDecks(hands);
-               changePlayerTurn();
-           }
-        }
-    }
-
     useEffect(() => {
         const deck = startGame(deck);
 
@@ -156,7 +172,18 @@ const App = () => {
                     changePlayerTurn={changePlayerTurn}
                 />
             }
-            { isDealing === true ? 'Dealing cards...' : <PlayerHand cards={decks[0]} handleCardClick={handleCardClick} />}
+            { isDealing === true ? 'Dealing cards...' : 
+                <PlayerHand 
+                    cards={decks[0]} 
+                    playedCards={playedCards}
+                    playSingleCard={playSingleCard}
+                    setDecks={setDecks}
+                    changePlayerTurn={changePlayerTurn}
+                    currentPlayer={currentPlayer}
+                    openPlay={openPlay}
+                    displayAlert={displayAlert}
+                />
+            }
             <div className='messages'>
                 <div className='game-status'>{`Player ${currentPlayer + 1}'s Turn`}</div>
                 <div id='alert'></div>

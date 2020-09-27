@@ -51,7 +51,7 @@ const CompHands = ({
     
         // computer will pass if sortedHand is empty
         if (sortedHand.length === 0) {
-            displayAlert(`Player ${currentPlayer + 1} has decided to pass.`);
+            displayAlert('pass');
             changePlayerTurn();
         } else { // otherwise, take card with lowest difference, remove it from current hand and place into played pile
             const index = currentHand.indexOf(sortedHand[0]);
