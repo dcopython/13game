@@ -9,8 +9,10 @@ const PlayerHand = ({
     setDecks,
     changePlayerTurn,
     currentPlayer,
+    displayAlert,
+    passTurn,
     openPlay,
-    displayAlert
+    setOpenPlay
     }) => {
     // handle player playing a card
     const handleCardClick = (card) => {
@@ -19,6 +21,11 @@ const PlayerHand = ({
         const updateHandAndTurn = () => {
             let hands = playSingleCard(card);
             setDecks(hands);
+
+            if (openPlay === true) {
+                setOpenPlay(false);
+            }
+
             changePlayerTurn();
         };
 
@@ -28,13 +35,24 @@ const PlayerHand = ({
             updateHandAndTurn();
         }
         else if (currentPlayer === 0) {
+            // if not open play, check card values first
             validPlay = cardComparison(card, playedCards.cards);
 
             if (validPlay === true) {
                 updateHandAndTurn();
             }
         }
-    }
+    };
+
+    const handlePlayerPass = () => {
+        const count = passTurn();
+        displayAlert('pass');
+        
+        // only change player turn if there hasn't been 3 passes already
+        if (count < 3) {
+            changePlayerTurn();
+        }
+    };
 
     useEffect(() => {
         if (openPlay === true && currentPlayer === 0) {
@@ -50,6 +68,7 @@ const PlayerHand = ({
                     <Card card={card} key={i} showFace={true} handleCardClick={handleCardClick} />
                 ))}
             </div>
+            <button type='button' onClick={handlePlayerPass}>Pass</button>
         </div>
     )
 }

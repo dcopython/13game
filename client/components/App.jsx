@@ -20,6 +20,7 @@ const App = () => {
     const [currentPlayer, setCurrentPlayer] = useState(null);
     const [passedPlayers, setPassedPlayers] = useState(new Array(4).fill('false'));
     const [openPlay, setOpenPlay] = useState(false);
+    const [gameWin, setGameWin] = useState(false);
 
     const shuffleDeck = () => {
         const shuffledDeck = cards;
@@ -40,7 +41,12 @@ const App = () => {
         let n = deck.length;
 
         while (i < n) {
-            hands.push(deck.slice(i, i += 13));
+            let hand = deck.slice(i, i += 13);
+            // sort them in ascending order
+            hand = hand.sort((a, b) => {
+                return checkCardValue(a) - checkCardValue(b);
+            });
+            hands.push(hand);
         }
 
         return hands;
@@ -87,6 +93,8 @@ const App = () => {
             // update passed array with latest passed player
             setPassedPlayers(passes);
         }
+
+        return countPasses;
     }
 
     const startGame = () => {
@@ -116,6 +124,10 @@ const App = () => {
         return decks;
     }
 
+    const checkGameWin = (hand) => {
+        if (hand.length === 0) {}
+    }
+
     const displayAlert = (msgType) => {
         const alertDiv = document.getElementById('alert');
         const msgs = {
@@ -128,7 +140,7 @@ const App = () => {
         // clear alert message after 3 seconds
         setTimeout(() => {
             alertDiv.innerText = '';
-        }, 2000);
+        }, 3000);
     };
 
     // takes in card to be played and current player
@@ -158,7 +170,6 @@ const App = () => {
         setIsDealing(false);
     },[]);
 
-
     return (
         <div>
             { isDealing === true ? 'Dealing cards...' : 
@@ -170,27 +181,32 @@ const App = () => {
                     currentPlayer={currentPlayer}
                     displayAlert={displayAlert}
                     changePlayerTurn={changePlayerTurn}
+                    passTurn={passTurn}
+                    openPlay={openPlay}
+                    setOpenPlay={setOpenPlay}
                 />
             }
             { isDealing === true ? 'Dealing cards...' : 
                 <PlayerHand 
                     cards={decks[0]} 
                     playedCards={playedCards}
+                    setPlayedCards={setPlayedCards}
                     playSingleCard={playSingleCard}
                     setDecks={setDecks}
                     changePlayerTurn={changePlayerTurn}
                     currentPlayer={currentPlayer}
                     openPlay={openPlay}
                     displayAlert={displayAlert}
+                    passTurn={passTurn}
+                    openPlay={openPlay}
+                    setOpenPlay={setOpenPlay}
                 />
             }
             <div className='messages'>
                 <div className='game-status'>{`Player ${currentPlayer + 1}'s Turn`}</div>
                 <div id='alert'></div>
             </div>
-            <div className='playedPile'>
-                {playedCards.cards.length === 0 ? 'Loading' : <PlayedCardsPile pile={playedCards.cards} />}
-            </div>
+            {playedCards.cards.length === 0 ? 'Loading' : <PlayedCardsPile pile={playedCards.cards} />}
         </div>
     )
 }

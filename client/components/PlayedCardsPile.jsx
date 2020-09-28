@@ -5,7 +5,9 @@ const PlayedCardsPile = (props) => {
     const { pile } = props;
 
     return (
-        <Card card={pile[pile.length - 1]} showFace={true} />
+        <div className='playedPile'>
+            <Card card={pile[pile.length - 1]} showFace={true} />
+        </div>
     )
 }
 

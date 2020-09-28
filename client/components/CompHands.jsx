@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Card from './Card.jsx';
 import checkCardValue from '../gameplay/checkCardValue.js';
 
@@ -9,21 +9,47 @@ const CompHands = ({
     setPlayedCards,
     currentPlayer,
     displayAlert,
-    changePlayerTurn 
+    changePlayerTurn,
+    passTurn,
+    openPlay,
+    setOpenPlay
     }) => {
+    // plays the lowest card in the computer's hand
+    const playLowestCard = (deck, card) => {
+        const hand = deck[currentPlayer];
+        const index = hand.indexOf(card);
+        hand.splice(index, 1);
+        setPlayedCards({
+            lastPlayedBy: currentPlayer,
+            cards: [...playedCards.cards, card]
+        })
+        setDecks(deck);
+    }
+
+    // handles computer's turn during open play
+    const compOpenPlay = (deck) => {
+        const hand = deck[currentPlayer];
+        // const sortedHand = hand.sort((a, b) => {
+        //     return checkCardValue(a) - checkCardValue(b);
+        // });
+
+        playLowestCard(deck, sortedHand[0]);
+    };
+
+    // controls computer's play
     const playCompHand = () => {
         const decksCopy = [...decks];
+
+        // play any card when it's open play during computer's turn
+        if (openPlay === true) {
+            compOpenPlay(decksCopy);
+            setOpenPlay(false);
+            changePlayerTurn();
+        }
 
         // find last played card and get value of it
         const prevCard = playedCards.cards[playedCards.cards.length - 1];
         const prevCardValue = checkCardValue(prevCard);
-        // let maxPrevValue = 0;
-    
-        // if (prevCardValue.length === 3) {
-        //     maxPrevValue = (Math.round(prevCardValue / 100) * 100) + 4;
-        // } else {
-        //     maxPrevValue = (Math.round(prevCardValue / 10) * 10) + 4;
-        // }
     
         // loop through current hand and find a card with the closest value and play it
         // get current player's hand
@@ -43,16 +69,21 @@ const CompHands = ({
         console.log('pre-sorted: ', sortedHand);
     
         // sort by smallest value difference from previous card
-        sortedHand = sortedHand.sort((a, b) => {
-            return checkCardValue(a) - checkCardValue(b);
-        });
+        // sortedHand = sortedHand.sort((a, b) => {
+        //     return checkCardValue(a) - checkCardValue(b);
+        // });
     
-        console.log('post-sorted: ', sortedHand);
+        // console.log('post-sorted: ', sortedHand);
     
         // computer will pass if sortedHand is empty
         if (sortedHand.length === 0) {
+            const count = passTurn();
             displayAlert('pass');
-            changePlayerTurn();
+            
+            // only change player turn if there hasn't been 3 passes already
+            if (count < 3) {
+                changePlayerTurn();
+            }
         } else { // otherwise, take card with lowest difference, remove it from current hand and place into played pile
             const index = currentHand.indexOf(sortedHand[0]);
             currentHand.splice(index, 1);
@@ -64,6 +95,14 @@ const CompHands = ({
             changePlayerTurn();
         }
     };
+
+    // useEffect(() => {
+    //     if (currentPlayer > 0) {
+    //         setTimeout(() => {
+    //             playCompHand();  
+    //         }, 2000);
+    //     } 
+    // },[currentPlayer])
 
     return (
         <div className='compHands-container'>
