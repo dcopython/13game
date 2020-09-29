@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PlayerHand from './PlayerHand.jsx';
 import CompHands from './CompHands.jsx';
 import PlayedCardsPile from './PlayedCardsPile.jsx';
-import UserProfile from './UserProfile.jsx';
+import PlacingBoard from './PlacingBoard.jsx';
 import cards from '../cards.js';
 import cardComparison from '../gameplay/cardComparison.js';
 import checkCardValue from '../gameplay/checkCardValue.js';
@@ -20,7 +20,8 @@ const App = () => {
     const [currentPlayer, setCurrentPlayer] = useState(null);
     const [passedPlayers, setPassedPlayers] = useState(new Array(4).fill('false'));
     const [openPlay, setOpenPlay] = useState(false);
-    const [gameWin, setGameWin] = useState(false);
+    const [placing, setPlacing] = useState([]);
+    const [endGame, setEndGame] = useState(false);
 
     const shuffleDeck = () => {
         const shuffledDeck = cards;
@@ -74,6 +75,10 @@ const App = () => {
 
         passes[currentPlayer] = true;
 
+        // calculate # of players left in game and reduce amount of passes
+        // needed for open play as players drop out
+        const playersLeft = (4 - placing.length);
+
         const countPasses = passes.reduce((total, bool) => {
             if (bool === true) {
                 total += 1;
@@ -85,7 +90,7 @@ const App = () => {
         // if the three other players pass, set currentPlayer to whoever played the last card
         // then change openPlay to true to signal that any card can be played
         // and reset passes state
-        if (countPasses === 3) {
+        if (countPasses === playersLeft) {
             setCurrentPlayer(playedCards.lastPlayedBy);
             setOpenPlay(true);
             setPassedPlayers(new Array(4).fill('false'));
@@ -95,7 +100,7 @@ const App = () => {
         }
 
         return countPasses;
-    }
+    };
 
     const startGame = () => {
         // shuffle cards and deal into four hands
@@ -122,11 +127,33 @@ const App = () => {
         });
 
         return decks;
-    }
+    };
 
-    const checkGameWin = (hand) => {
-        if (hand.length === 0) {}
-    }
+    const stopGame = () => {
+        // find the last player that still has cards
+        decks.forEach((deck, i) => {
+            if (deck.length > 0) {
+                // add them placing array
+                const places = [...placing];
+                places.push(i);
+                setPlacing(places);
+            }
+        });
+
+        // set currentplayer to null to stop turns
+        setCurrentPlayer(null);
+
+        // set endgame to true to allow placing board to show
+        setEndGame(true);
+    };
+
+    const checkPlacing = (hand) => {
+        if (hand.length === 0) {
+            let placeCopy = [...placing];
+            placeCopy.push(currentPlayer);
+            setPlacing(placeCopy);
+        }
+    };
 
     const displayAlert = (msgType) => {
         const alertDiv = document.getElementById('alert');
@@ -143,26 +170,7 @@ const App = () => {
         }, 3000);
     };
 
-    // takes in card to be played and current player
-    // handles removing card from hand and moving to played pile
-    const playSingleCard = (card) => {
-        const hands = [...decks];
-
-        // find position of current card in hand
-        const index = hands[currentPlayer].indexOf(card);
-
-        // splice current card from currentHand
-        hands[currentPlayer].splice(index, 1);
-
-        // update currentPlayer hand
-        setPlayedCards({
-            lastPlayedBy: currentPlayer,
-            cards: [...playedCards.cards, card]
-        })
-
-        return hands;
-    };
-
+    // used to start the game
     useEffect(() => {
         const deck = startGame(deck);
 
@@ -170,43 +178,72 @@ const App = () => {
         setIsDealing(false);
     },[]);
 
+    // used to check for empty hands each time a card is played
+    useEffect(() => {
+        decks.forEach((deck, i) => {
+            if (deck.length === 0) {
+                // check to make sure it's not adding previously checked winners
+                if (!placing.includes(i)) {
+                    const places = [...placing];
+                    places.push(i);
+                    setPlacing(places);
+                    // let next player over play any card
+                    setOpenPlay(true);
+                    changePlayerTurn();
+                }
+            }
+        })
+    }, [playedCards])
+
+    // used to stop game if there's three finishes
+    useEffect(() => {
+        if (placing.length === 3) {
+            // if three people have finished, show placing board
+            stopGame();
+        }
+    }, [placing]);
+
     return (
         <div>
-            { isDealing === true ? 'Dealing cards...' : 
-                <CompHands 
-                    decks={decks}
-                    setDecks={setDecks}
-                    playedCards={playedCards}
-                    setPlayedCards={setPlayedCards}
-                    currentPlayer={currentPlayer}
-                    displayAlert={displayAlert}
-                    changePlayerTurn={changePlayerTurn}
-                    passTurn={passTurn}
-                    openPlay={openPlay}
-                    setOpenPlay={setOpenPlay}
-                />
-            }
-            { isDealing === true ? 'Dealing cards...' : 
-                <PlayerHand 
-                    cards={decks[0]} 
-                    playedCards={playedCards}
-                    setPlayedCards={setPlayedCards}
-                    playSingleCard={playSingleCard}
-                    setDecks={setDecks}
-                    changePlayerTurn={changePlayerTurn}
-                    currentPlayer={currentPlayer}
-                    openPlay={openPlay}
-                    displayAlert={displayAlert}
-                    passTurn={passTurn}
-                    openPlay={openPlay}
-                    setOpenPlay={setOpenPlay}
-                />
-            }
-            <div className='messages'>
-                <div className='game-status'>{`Player ${currentPlayer + 1}'s Turn`}</div>
-                <div id='alert'></div>
+            <div className='placingBoard'>
+                <PlacingBoard endGame={endGame} placing={placing} />
             </div>
-            {playedCards.cards.length === 0 ? 'Loading' : <PlayedCardsPile pile={playedCards.cards} />}
+            <div className='main'>
+                { isDealing === true ? 'Dealing cards...' : 
+                    <CompHands 
+                        decks={decks}
+                        setDecks={setDecks}
+                        playedCards={playedCards}
+                        setPlayedCards={setPlayedCards}
+                        currentPlayer={currentPlayer}
+                        displayAlert={displayAlert}
+                        changePlayerTurn={changePlayerTurn}
+                        passTurn={passTurn}
+                        openPlay={openPlay}
+                        setOpenPlay={setOpenPlay}
+                    />
+                }
+                { isDealing === true ? 'Dealing cards...' : 
+                    <PlayerHand 
+                        decks={decks} 
+                        playedCards={playedCards}
+                        setPlayedCards={setPlayedCards}
+                        setDecks={setDecks}
+                        changePlayerTurn={changePlayerTurn}
+                        currentPlayer={currentPlayer}
+                        openPlay={openPlay}
+                        displayAlert={displayAlert}
+                        passTurn={passTurn}
+                        openPlay={openPlay}
+                        setOpenPlay={setOpenPlay}
+                    />
+                }
+                <div className='messages'>
+                    <div className='game-status'>{`Player ${currentPlayer + 1}'s Turn`}</div>
+                    <div id='alert'></div>
+                </div>
+                {playedCards.cards.length === 0 ? 'Loading' : <PlayedCardsPile pile={playedCards.cards} />}
+            </div>
         </div>
     )
 }

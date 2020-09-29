@@ -33,7 +33,7 @@ const CompHands = ({
         //     return checkCardValue(a) - checkCardValue(b);
         // });
 
-        playLowestCard(deck, sortedHand[0]);
+        playLowestCard(deck, hand[0]);
     };
 
     // controls computer's play
@@ -96,13 +96,16 @@ const CompHands = ({
         }
     };
 
-    // useEffect(() => {
-    //     if (currentPlayer > 0) {
-    //         setTimeout(() => {
-    //             playCompHand();  
-    //         }, 2000);
-    //     } 
-    // },[currentPlayer])
+    useEffect(() => {
+        // skip computer turn if their hand is empty
+        if (currentPlayer > 0 && decks[currentPlayer].length === 0) {
+            changePlayerTurn();
+        } else if (currentPlayer > 0) {
+            setTimeout(() => {
+                playCompHand();  
+            }, 2000);
+        } 
+    },[currentPlayer])
 
     return (
         <div className='compHands-container'>
