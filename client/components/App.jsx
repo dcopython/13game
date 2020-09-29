@@ -3,6 +3,7 @@ import PlayerHand from './PlayerHand.jsx';
 import CompHands from './CompHands.jsx';
 import PlayedCardsPile from './PlayedCardsPile.jsx';
 import PlacingBoard from './PlacingBoard.jsx';
+import MessageBoard from './MessageBoard.jsx';
 import cards from '../cards.js';
 import cardComparison from '../gameplay/cardComparison.js';
 import checkCardValue from '../gameplay/checkCardValue.js';
@@ -22,6 +23,9 @@ const App = () => {
     const [openPlay, setOpenPlay] = useState(false);
     const [placing, setPlacing] = useState([]);
     const [endGame, setEndGame] = useState(false);
+
+    // message board state
+    const [alertMsg, setAlertMsg] = useState(null);
 
     const shuffleDeck = () => {
         const shuffledDeck = cards;
@@ -156,18 +160,20 @@ const App = () => {
     };
 
     const displayAlert = (msgType) => {
-        const alertDiv = document.getElementById('alert');
-        const msgs = {
-            'pass': `Player ${currentPlayer + 1} has decided to pass`,
-            'open': 'All other players have passed, play any card combination'
-        };
+        // const alertDiv = document.getElementById('alert');
+        // const msgs = {
+        //     'pass': `Player ${currentPlayer + 1} has decided to pass`,
+        //     'open': 'All other players have passed, play any card combination'
+        // };
 
-        alertDiv.innerText = `${msgs[msgType]}`;
+        // alertDiv.innerText = `${msgs[msgType]}`;
 
-        // clear alert message after 3 seconds
-        setTimeout(() => {
-            alertDiv.innerText = '';
-        }, 3000);
+        // // clear alert message after 3 seconds
+        // setTimeout(() => {
+        //     alertDiv.innerText = '';
+        // }, 3000);
+
+        setAlertMsg(msgType);
     };
 
     // used to start the game
@@ -238,10 +244,7 @@ const App = () => {
                         setOpenPlay={setOpenPlay}
                     />
                 }
-                <div className='messages'>
-                    <div className='game-status'>{`Player ${currentPlayer + 1}'s Turn`}</div>
-                    <div id='alert'></div>
-                </div>
+                <MessageBoard currentPlayer={currentPlayer} alertMsg={alertMsg} />
                 {playedCards.cards.length === 0 ? 'Loading' : <PlayedCardsPile pile={playedCards.cards} />}
             </div>
         </div>

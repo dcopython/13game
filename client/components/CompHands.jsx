@@ -42,6 +42,7 @@ const CompHands = ({
 
         // play any card when it's open play during computer's turn
         if (openPlay === true) {
+            displayAlert('compOpen');
             compOpenPlay(decksCopy);
             setOpenPlay(false);
             changePlayerTurn();
