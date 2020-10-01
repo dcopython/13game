@@ -2,272 +2,32 @@ import React, { useState, useEffect } from 'react';
 import PlayerHand from './PlayerHand.jsx';
 import CompHands from './CompHands.jsx';
 import PlayedCardsPile from './PlayedCardsPile.jsx';
-import UserProfile from './UserProfile.jsx';
+import PlacingBoard from './PlacingBoard.jsx';
+import MessageBoard from './MessageBoard.jsx';
 import cards from '../cards.js';
+import cardComparison from '../gameplay/cardComparison.js';
+import checkCardValue from '../gameplay/checkCardValue.js';
 
 const App = () => {
     // game setup state
+    const [isDealing, setIsDealing] = useState(true);
     const [decks, setDecks] = useState([]);
-    const [playedCards, setPlayedCards] = useState([]);
-    const [playerCards, setPlayerCards] = useState([]);
-    const [compTwoCards, setCompTwoCards] = useState([]);
-    const [compThreeCards, setCompThreeCards] = useState([]);
-    const [compFourCards, setCompFourCards] = useState([]);
+    const [playedCards, setPlayedCards] = useState({
+        lastPlayedBy: null,
+        cards: []
+    });
 
+    // message board state
+    const [alertMsg, setAlertMsg] = useState(null);
+    
     // gameplay state
     const [currentPlayer, setCurrentPlayer] = useState(null);
-    const [updatePlayerTurn, setUpdatePlayerTurn] = useState(false);
+    const [passedPlayers, setPassedPlayers] = useState(new Array(4).fill('false'));
+    const [openPlay, setOpenPlay] = useState(false);
+    const [placing, setPlacing] = useState([]);
+    const [endGame, setEndGame] = useState(false);
 
-    // const shuffleDeck = () => {
-    //     const shuffledDeck = cards;
-
-    //     for (let i = shuffledDeck.length - 1; i > 0; i--) {
-    //         const j = Math.floor(Math.random() * i);
-    //         const temp = shuffledDeck[i];
-    //         shuffledDeck[i] = shuffledDeck[j];
-    //         shuffledDeck[j] = temp;
-    //     }
-
-    //     dealCards(shuffledDeck);
-    // };
-
-    // const dealCards = (deck) => {
-    //     // deal cards to player
-    //     setPlayerCards(deck.slice(0, 13));
-
-    //     // deal cards to computer players
-    //     setCompTwoCards(deck.slice(13, 26));
-    //     setCompThreeCards(deck.slice(26, 39));
-    //     setCompFourCards(deck.slice(39, 52));
-    // };
-
-    const changePlayerTurn = () => {
-        // turns always go clockwise 1 to 4
-        if (currentPlayer === 3) {
-            setCurrentPlayer(0);
-        } else {
-            setCurrentPlayer(currentPlayer + 1);
-        }
-        // setUpdatePlayerTurn(true);
-    };
-
-    // const startGame = () => {
-    //     // look through all decks for 3 of spades
-    //     decks.forEach((deck, i) => {
-    //         deck.forEach((card, j) => {
-    //             if (card === '3S') {
-    //                 // set the player that has it as starting player
-    //                 setCurrentPlayer(i);
-
-    //                 // remove card from deck
-    //                 deck.splice(j, 1);
-
-    //                 // place deck into middle pile
-    //                 setPlayedCards(['3S']);
-    //             }
-    //         })
-    //     });
-
-    //     // change to next player
-    //     changePlayerTurn();
-    // }
-
-    // find point value of a single card
-    const checkCardValue = (card) => {
-        const faceValue = {
-            "3": 30,
-            "4": 40,
-            "5": 50,
-            "6": 60,
-            "7": 70,
-            "8": 80,
-            "9": 90,
-            "10": 100,
-            "J": 110,
-            "Q": 120,
-            "K": 130,
-            "A": 140,
-            "2": 150,
-        }
-
-        const suitValue = {
-            "S": 1,
-            "C": 2,
-            "D": 3,
-            "H": 4,
-        }
-        
-        // calculate face points
-        let points = 0;
-
-        if (card.length === 3) { // need to account for 10 cards
-            const facePoints = faceValue[card.slice(0, 2)];
-            points += facePoints;
-
-            const suitPoints = suitValue[card.slice(2)];
-            points += suitPoints;
-        } else {
-            const facePoints = faceValue[card.slice(0, 1)];
-            points += facePoints;
-
-            const suitPoints = suitValue[card.slice(1)];
-            points += suitPoints;
-        }
-
-        return points;
-    }
-
-    const displayAlert = (msg) => {
-        const alertDiv = document.getElementById('alert');
-
-        alertDiv.innerText = `${msg}`;
-
-        // clear alert message after 3 seconds
-        setTimeout(() => {
-            alertDiv.innerText = '';
-        }, 2000);
-    };
-
-    // takes in card to be played and current player
-    // handles removing card from hand and moving to played pile
-    const playSingleCard = (currentCard, currentPlayer) => {
-        // find position of current card in hand
-        const index = playerCards.indexOf(currentCard);
-
-        // splice current card from currentHand
-        playerCards.splice(index, 1);
-
-        // update currentPlayer hand
-        setPlayedCards([...playedCards, currentCard]);
-
-        // add current card to playedCards array
-        setPlayerCards([...playerCards]);
-    };
-
-    // check cards for valid move
-    const cardComparison = (cardToBePlayed) => {
-        const prevCard = playedCards[playedCards.length - 1];
-
-        // check value and suit of current card
-        const prevCardValue = checkCardValue(prevCard);
-
-        // check value and suit of card to be played
-        const currentCardValue = checkCardValue(cardToBePlayed);
-
-        // console.log('prev: ', prevCardValue);
-        // console.log('next: ', currentCardValue);
-
-        // compare last played card to the card about to be played to see if it's a valid move
-        if (currentCardValue > prevCardValue) {
-            // play that card
-            playSingleCard(cardToBePlayed, currentPlayer)
-
-            return true;
-        } else {
-            // card is not a valid play
-            // display message to tell user to pick another card
-            const alertDiv = document.getElementById('alert');
-
-            alertDiv.innerText = 'Not a valid card, please pick a higher value card';
-
-            // clear alert message after 3 seconds
-            setTimeout(() => {
-                alertDiv.innerText = '';
-            }, 2000);
-
-            return false;
-        }
-
-    };
-
-    const playCompHand = () => {
-        const compHandList = {
-            1: compTwoCards,
-            2: compThreeCards,
-            3: compFourCards,
-        };
-
-        const compHandSetters = {
-            1: setCompTwoCards,
-            2: setCompThreeCards,
-            3: setCompFourCards
-        };
-
-        // get value of previous card
-        const prevCard = playedCards[playedCards.length - 1];
-
-        // check value and suit of current card
-        const prevCardValue = checkCardValue(prevCard);
-
-        let maxPrevValue = 0;
-        if (prevCardValue.length === 3) {
-            maxPrevValue = (Math.round(prevCardValue / 100) * 100) + 4;
-        } else {
-            maxPrevValue = (Math.round(prevCardValue / 10) * 10) + 4;
-        }
-
-        // loop through current hand and find a card with the clos and play it
-        // get current player's hand
-        const currentHand = compHandList[currentPlayer];
-        console.log('current hand: ', currentHand);
-
-        let sortedHand = [];
-
-        // for each card, find the value
-        currentHand.forEach((card) => {
-            const currentCardValue = checkCardValue(card);
-
-            // remove any values that wouldn't beat previous card and add to new array
-            if (currentCardValue > maxPrevValue) {
-                sortedHand.push(card);
-            }
-        });
-
-        console.log('pre-sorted: ', sortedHand);
-
-        // sort by smallest difference from previous card
-        sortedHand = sortedHand.sort((a, b) => {
-            return checkCardValue(a) - checkCardValue(b);
-        });
-
-        console.log('post-sorted: ', sortedHand);
-
-        // computer will pass if sortedHand is empty
-        if (sortedHand.length === 0) {
-            displayAlert(`Player ${currentPlayer + 1} has decided to pass.`);
-
-            changePlayerTurn();
-        } else { // otherwise, take card with lowest difference, remove it from current hand and place into played pile
-            const index = currentHand.indexOf(sortedHand[0]);
-
-            currentHand.splice(index, 1);
-
-            setPlayedCards([...playedCards, sortedHand[0]]);
-
-            compHandSetters[currentPlayer]([...currentHand]);
-
-            changePlayerTurn();
-        }
-    };
-
-    // handle player playing a card
-    const handleCardClick = (card) => {
-        let validPlay = false;
-
-        // check if it's player 1's turn
-        if (currentPlayer === 0) {
-           validPlay = cardComparison(card);
-
-           if (validPlay === true) {
-               changePlayerTurn();
-           }
-        }
-
-
-    }
-
-    // shuffle deck and deal cards
-    useEffect(() => {
+    const shuffleDeck = () => {
         const shuffledDeck = cards;
 
         for (let i = shuffledDeck.length - 1; i > 0; i--) {
@@ -277,71 +37,207 @@ const App = () => {
             shuffledDeck[j] = temp;
         }
 
-        // deal cards to player
-        setPlayerCards(shuffledDeck.slice(0, 13));
+        return shuffledDeck;
+    };
 
-        // deal cards to computer players
-        setCompTwoCards(shuffledDeck.slice(13, 26));
-        setCompThreeCards(shuffledDeck.slice(26, 39));
-        setCompFourCards(shuffledDeck.slice(39, 52));
-        
-    },[]);
+    const dealCards = (deck) => {
+        const hands = [];
+        let i = 0;
+        let n = deck.length;
 
-    // when all decks are filled, update decks array
-    useEffect(() => {
-        setDecks([playerCards, compTwoCards, compThreeCards, compFourCards]);
-    },[playerCards, compTwoCards, compThreeCards, compFourCards])
+        while (i < n) {
+            let hand = deck.slice(i, i += 13);
+            // sort them in ascending order
+            hand = hand.sort((a, b) => {
+                return checkCardValue(a) - checkCardValue(b);
+            });
+            hands.push(hand);
+        }
 
-    // look for 3 of spades to start game
-    useEffect(() => {
+        return hands;
+    };
+
+    const changePlayerTurn = (player) => {
+        // if initializing current player, assign directly, otherwise continue with rotation
+        if (player) {
+            if (player === 3) {
+                setCurrentPlayer(0);
+            } else {
+                setCurrentPlayer(player + 1);
+            }
+        } else {
+            if (currentPlayer === 3) {
+                setCurrentPlayer(0);
+            } else {
+                setCurrentPlayer(currentPlayer + 1);
+            }
+        }
+    };
+
+    const passTurn = () => {
+        const passes = [...passedPlayers];
+
+        passes[currentPlayer] = true;
+
+        // calculate # of players left in game and reduce amount of passes
+        // needed for open play as players drop out
+        const passesNeededForOpenPlay = (4 - (placing.length + 1));
+
+        const countPasses = passes.reduce((total, bool) => {
+            if (bool === true) {
+                total += 1;
+            }
+
+            return total;
+        }, 0);
+
+        // if the three other players pass, set currentPlayer to whoever played the last card
+        // then change openPlay to true to signal that any card can be played
+        // and reset passes state
+        if (countPasses === passesNeededForOpenPlay) {
+            setOpenPlay(true);
+            setPassedPlayers(new Array(4).fill(false));
+            setCurrentPlayer(playedCards.lastPlayedBy);
+        } else {
+            // update passed array with latest passed player
+            setPassedPlayers(passes);
+        }
+
+        return countPasses;
+    };
+
+    const startGame = () => {
+        // shuffle cards and deal into four hands
+        let decks = shuffleDeck();
+        decks = dealCards(decks);
+
         // look through all decks for 3 of spades
         decks.forEach((deck, i) => {
             deck.forEach((card, j) => {
                 if (card === '3S') {
-                    // set the player that has it as starting player
-                    setCurrentPlayer(i + 1);
-
                     // remove card from deck
                     deck.splice(j, 1);
 
-                    // place deck into middle pile
-                    setPlayedCards(['3S']);
+                    // place deck into played pile
+                    setPlayedCards({
+                        lastPlayedBy: i,
+                        cards: ['3S']
+                    });
+
+                    // pass on deck number to function to assign next player
+                    changePlayerTurn(i);
                 }
             })
         });
 
-        // // change to next player
-        //  if (currentPlayer === 3) {
-        //     setCurrentPlayer(0);
-        // } else {
-        //     setCurrentPlayer(prevState => prevState + 1);
-        // }
+        return decks;
+    };
 
-    }, [decks]);
+    const stopGame = () => {
+        // find the last player that still has cards
+        decks.forEach((deck, i) => {
+            if (deck.length > 0) {
+                // add them placing array
+                const places = [...placing];
+                places.push(i);
+                setPlacing(places);
+            }
+        });
 
-    // useEffect(() => {
-    //     if (currentPlayer === 3) {
-    //         setCurrentPlayer(0);
-    //     } else {
-    //         setCurrentPlayer(prevState => prevState + 1);
-    //     }
+        // set currentplayer to null to stop turns
+        setCurrentPlayer(null);
 
-    //     setUpdatePlayerTurn(false);
-    // }, [updatePlayerTurn])
+        // set endgame to true to allow placing board to show
+        setEndGame(true);
+    };
+
+    const checkPlacing = (hand) => {
+        if (hand.length === 0) {
+            let placeCopy = [...placing];
+            placeCopy.push(currentPlayer);
+            setPlacing(placeCopy);
+        }
+    };
+
+    const displayAlert = (msgType, currentPlayer = null, card = null) => {
+        setAlertMsg([msgType, currentPlayer, card]);
+    };
+
+    // used to start the game
+    useEffect(() => {
+        const deck = startGame(deck);
+
+        setDecks(deck);
+        setIsDealing(false);
+    },[]);
+
+    // used to check for empty hands each time a card is played
+    useEffect(() => {
+        decks.forEach((deck, i) => {
+            if (deck.length === 0) {
+                // check to make sure it's not adding previously checked winners
+                if (!placing.includes(i)) {
+                    const places = [...placing];
+                    places.push(i);
+                    setPlacing(places);
+                    // let next player over play any card
+                    setOpenPlay(true);
+                    changePlayerTurn();
+                }
+            }
+        })
+    }, [playedCards])
+
+    // used to stop game if there's three finishes
+    useEffect(() => {
+        if (placing.length === 3) {
+            // if three people have finished, show placing board
+            stopGame();
+        }
+    }, [placing]);
 
     return (
         <div>
-            <CompHands cards2={compTwoCards} cards3={compThreeCards} cards4={compFourCards} />
-            <PlayerHand cards={playerCards} handleCardClick={handleCardClick} />
-            <div className='messages'>
-                <div className='game-status'>{`Player ${currentPlayer + 1}'s Turn`}</div>
-                <div id='alert'></div>
+            <div className='placingBoard'>
+                <PlacingBoard endGame={endGame} placing={placing} />
             </div>
-            <div className='playedPile'>
-                {playedCards.length === 0 ? 'Loading' : <PlayedCardsPile pile={playedCards} />}
+            <div className='main'>
+                { isDealing === true ? 'Dealing cards...' : 
+                    <CompHands 
+                        decks={decks}
+                        setDecks={setDecks}
+                        playedCards={playedCards}
+                        setPlayedCards={setPlayedCards}
+                        currentPlayer={currentPlayer}
+                        displayAlert={displayAlert}
+                        changePlayerTurn={changePlayerTurn}
+                        passTurn={passTurn}
+                        openPlay={openPlay}
+                        setOpenPlay={setOpenPlay}
+                    />
+                }
+                { isDealing === true ? 'Dealing cards...' : 
+                    <PlayerHand 
+                        decks={decks} 
+                        playedCards={playedCards}
+                        setPlayedCards={setPlayedCards}
+                        setDecks={setDecks}
+                        changePlayerTurn={changePlayerTurn}
+                        currentPlayer={currentPlayer}
+                        openPlay={openPlay}
+                        displayAlert={displayAlert}
+                        passTurn={passTurn}
+                        openPlay={openPlay}
+                        setOpenPlay={setOpenPlay}
+                    />
+                }
+                <MessageBoard 
+                    currentPlayer={currentPlayer} 
+                    alertMsg={alertMsg} 
+                    setAlertMsg={setAlertMsg} 
+                />
+                {playedCards.cards.length === 0 ? 'Loading' : <PlayedCardsPile pile={playedCards.cards} />}
             </div>
-            <button className='computerTurn-btn' onClick={playCompHand}>Computer Turn</button>
-            <UserProfile />
         </div>
     )
 }

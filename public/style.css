@@ -47,6 +47,10 @@
     margin-top: 20px;
 }
 
+#alert {
+    width: 200px;
+}
+
 /* PLAYED PILE */
 .playedPile {
     position: fixed;
