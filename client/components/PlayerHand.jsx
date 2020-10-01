@@ -63,6 +63,8 @@ const PlayerHand = ({
 
             if (validPlay === true) {
                 updateHandAndTurn();
+            } else {
+                displayAlert('invalid');
             }
         }
     };
@@ -83,7 +85,7 @@ const PlayerHand = ({
         if (openPlay === true && currentPlayer === 0) {
             displayAlert('open', currentPlayer);
         }
-    },[openPlay]);
+    });
 
     useEffect(() => {
         // player 1's turn if their hand is empty

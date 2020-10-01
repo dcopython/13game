@@ -159,20 +159,7 @@ const App = () => {
         }
     };
 
-    const displayAlert = (msgType, currentPlayer, card = null) => {
-        // const alertDiv = document.getElementById('alert');
-        // const msgs = {
-        //     'pass': `Player ${currentPlayer + 1} has decided to pass`,
-        //     'open': 'All other players have passed, play any card combination'
-        // };
-
-        // alertDiv.innerText = `${msgs[msgType]}`;
-
-        // // clear alert message after 3 seconds
-        // setTimeout(() => {
-        //     alertDiv.innerText = '';
-        // }, 3000);
-
+    const displayAlert = (msgType, currentPlayer = null, card = null) => {
         setAlertMsg([msgType, currentPlayer, card]);
     };
 

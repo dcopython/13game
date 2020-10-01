@@ -17,7 +17,8 @@ const MessageBoard = ({
                 'play': `Player ${player + 1} played ${card}`,
                 'pass': `Player ${player + 1} has decided to pass`,
                 'open': 'All other players have passed, play any card combination',
-                'compOpen': `All other players have passed, Player ${player + 1} will play any card`
+                'compOpen': `All other players have passed, Player ${player + 1} will play any card`,
+                'invalid': 'Not a valid card, please pick a higher value card'
             };
     
             if (messages.length === 5) {
