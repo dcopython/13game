@@ -85,7 +85,7 @@ const PlayerHand = ({
         if (openPlay === true && currentPlayer === 0) {
             displayAlert('open', currentPlayer);
         }
-    });
+    }, [openPlay, currentPlayer]);
 
     useEffect(() => {
         // player 1's turn if their hand is empty
