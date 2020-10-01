@@ -25,6 +25,9 @@ const PlayerHand = ({
         // splice current card from currentHand
         hands[currentPlayer].splice(index, 1);
 
+        // display what card was played
+        displayAlert('play', currentPlayer, card);
+
         // update currentPlayer hand
         setPlayedCards({
             lastPlayedBy: currentPlayer,
@@ -66,8 +69,8 @@ const PlayerHand = ({
 
     const handlePlayerPass = () => {
         if (currentPlayer === 0) {
+            displayAlert('pass', currentPlayer);
             const count = passTurn();
-            displayAlert('pass');
             
             // only change player turn if there hasn't been 3 passes already
             if (count < 3) {
@@ -78,7 +81,7 @@ const PlayerHand = ({
 
     useEffect(() => {
         if (openPlay === true && currentPlayer === 0) {
-            displayAlert('open');
+            displayAlert('open', currentPlayer);
         }
     },[openPlay]);
 

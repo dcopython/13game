@@ -16,6 +16,9 @@ const App = () => {
         lastPlayedBy: null,
         cards: []
     });
+
+    // message board state
+    const [alertMsg, setAlertMsg] = useState(null);
     
     // gameplay state
     const [currentPlayer, setCurrentPlayer] = useState(null);
@@ -23,9 +26,6 @@ const App = () => {
     const [openPlay, setOpenPlay] = useState(false);
     const [placing, setPlacing] = useState([]);
     const [endGame, setEndGame] = useState(false);
-
-    // message board state
-    const [alertMsg, setAlertMsg] = useState(null);
 
     const shuffleDeck = () => {
         const shuffledDeck = cards;
@@ -81,7 +81,7 @@ const App = () => {
 
         // calculate # of players left in game and reduce amount of passes
         // needed for open play as players drop out
-        const playersLeft = (4 - placing.length);
+        const passesNeededForOpenPlay = (4 - (placing.length + 1));
 
         const countPasses = passes.reduce((total, bool) => {
             if (bool === true) {
@@ -94,10 +94,10 @@ const App = () => {
         // if the three other players pass, set currentPlayer to whoever played the last card
         // then change openPlay to true to signal that any card can be played
         // and reset passes state
-        if (countPasses === playersLeft) {
-            setCurrentPlayer(playedCards.lastPlayedBy);
+        if (countPasses === passesNeededForOpenPlay) {
             setOpenPlay(true);
-            setPassedPlayers(new Array(4).fill('false'));
+            setPassedPlayers(new Array(4).fill(false));
+            setCurrentPlayer(playedCards.lastPlayedBy);
         } else {
             // update passed array with latest passed player
             setPassedPlayers(passes);
@@ -159,7 +159,7 @@ const App = () => {
         }
     };
 
-    const displayAlert = (msgType) => {
+    const displayAlert = (msgType, currentPlayer, card = null) => {
         // const alertDiv = document.getElementById('alert');
         // const msgs = {
         //     'pass': `Player ${currentPlayer + 1} has decided to pass`,
@@ -173,7 +173,7 @@ const App = () => {
         //     alertDiv.innerText = '';
         // }, 3000);
 
-        setAlertMsg(msgType);
+        setAlertMsg([msgType, currentPlayer, card]);
     };
 
     // used to start the game
@@ -244,7 +244,11 @@ const App = () => {
                         setOpenPlay={setOpenPlay}
                     />
                 }
-                <MessageBoard currentPlayer={currentPlayer} alertMsg={alertMsg} />
+                <MessageBoard 
+                    currentPlayer={currentPlayer} 
+                    alertMsg={alertMsg} 
+                    setAlertMsg={setAlertMsg} 
+                />
                 {playedCards.cards.length === 0 ? 'Loading' : <PlayedCardsPile pile={playedCards.cards} />}
             </div>
         </div>

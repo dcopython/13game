@@ -19,6 +19,7 @@ const CompHands = ({
         const hand = deck[currentPlayer];
         const index = hand.indexOf(card);
         hand.splice(index, 1);
+        displayAlert('play', currentPlayer, card);
         setPlayedCards({
             lastPlayedBy: currentPlayer,
             cards: [...playedCards.cards, card]
@@ -42,7 +43,7 @@ const CompHands = ({
 
         // play any card when it's open play during computer's turn
         if (openPlay === true) {
-            displayAlert('compOpen');
+            displayAlert('compOpen', currentPlayer);
             compOpenPlay(decksCopy);
             setOpenPlay(false);
             changePlayerTurn();
@@ -78,8 +79,8 @@ const CompHands = ({
     
         // computer will pass if sortedHand is empty
         if (sortedHand.length === 0) {
+            displayAlert('pass', currentPlayer);
             const count = passTurn();
-            displayAlert('pass');
             
             // only change player turn if there hasn't been 3 passes already
             if (count < 3) {
@@ -88,6 +89,7 @@ const CompHands = ({
         } else { // otherwise, take card with lowest difference, remove it from current hand and place into played pile
             const index = currentHand.indexOf(sortedHand[0]);
             currentHand.splice(index, 1);
+            displayAlert('play', currentPlayer, sortedHand[0]);
             setPlayedCards({
                 lastPlayedBy: currentPlayer,
                 cards: [...playedCards.cards, sortedHand[0]]
