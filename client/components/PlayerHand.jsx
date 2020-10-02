@@ -14,6 +14,8 @@ const PlayerHand = ({
     openPlay,
     setOpenPlay,
     }) => {
+    const selectedCards = [];
+
     // takes in card to be played and current player
     // handles removing card from hand and moving to played pile
     const playSingleCard = (card) => {
@@ -39,6 +41,13 @@ const PlayerHand = ({
 
     // handle player playing a card
     const handleCardClick = (card) => {
+        // selecting card
+        selectedCards.push(card);
+
+        // unselecting card
+    };
+
+    const handlePlayButton = () => {
         let validPlay = false;
 
         const updateHandAndTurn = () => {
@@ -97,14 +106,15 @@ const PlayerHand = ({
     return (
         <div className='playerHand-container'>
             <h5>Your Hand:</h5>
-            <div className='hand hhand-compact active-hand'>
+            <div className='hand hhand-compact'>
                 {decks[0].map((card, i) => (
                     <Card card={card} key={i} showFace={true} handleCardClick={handleCardClick} />
                 ))}
             </div>
+            <button type='button' onClick={handlePlayButton}>Play</button>
             <button type='button' onClick={handlePlayerPass}>Pass</button>
         </div>
-    )
+    );
 }
 
 export default PlayerHand;

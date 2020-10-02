@@ -26,7 +26,7 @@ const checkCardValue = (card) => {
     // calculate face points
     let points = 0;
 
-    if (card.length === 3) { // need to account for 10 cards
+    if (card.length === 3) { // need to account for 10 card
         const facePoints = faceValue[card.slice(0, 2)];
         points += facePoints;
 
