@@ -1,11 +1,9 @@
 import React from 'react';
 
-const Card = (props) => {
-    const { card, handleCardClick } = props;
-
-    if (props.showFace === true) {
+const Card = ({ card, handleCardClick, showFace }) => {
+    if (showFace === true) {
         return (
-            <img className='card' src={`cards/${props.card}.svg`} onClick={() => handleCardClick(card)}/>
+            <img className='card' src={`cards/${card}.svg`} onClick={() => handleCardClick(card)}/>
             )
     } else {
         return (
