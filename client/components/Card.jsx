@@ -7,13 +7,17 @@ const Card = ({ card, handleCardClick, showFace }) => {
         selected === false ? setSelected(true) : setSelected(false);
     };
 
+    const handleClickAndSelect = (card) => {
+        handleCardClick(card);
+        handleSelection();
+    }
+
     if (showFace === true) {
         return (
             <img 
                 className={selected === true ? 'card selected' : 'card'} 
                 src={`cards/${card}.svg`} 
-                onClick={() => handleCardClick(card)}
-                onClick={handleSelection}
+                onClick={() => handleClickAndSelect(card)}
             />
         )
     } else {

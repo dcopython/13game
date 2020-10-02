@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Card from './Card.jsx';
 import cardComparison from '../gameplay/cardComparison.js';
 
@@ -14,7 +14,7 @@ const PlayerHand = ({
     openPlay,
     setOpenPlay,
     }) => {
-    const selectedCards = [];
+    const [selectedCards, setSelectedCards] = useState([]);
 
     // takes in card to be played and current player
     // handles removing card from hand and moving to played pile
@@ -41,10 +41,18 @@ const PlayerHand = ({
 
     // handle player playing a card
     const handleCardClick = (card) => {
-        // selecting card
-        selectedCards.push(card);
+        const stateCopy = [...selectedCards];
+        const previouslySelectedCard = stateCopy.indexOf(card);
+        
+        if (previouslySelectedCard === -1) {
+            // selecting card
+            stateCopy.push(card);
+        } else {
+            // unselecting card
+            stateCopy.splice(previouslySelectedCard, 1);
+        }
 
-        // unselecting card
+        setSelectedCards(stateCopy);
     };
 
     const handlePlayButton = () => {
