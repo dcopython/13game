@@ -7,6 +7,8 @@ const Card = ({ card, handleCardClick, showFace }) => {
         selected === false ? setSelected(true) : setSelected(false);
     };
 
+    // combine the two functions that handle card selection into one function for
+    // use in onClick handler
     const handleClickAndSelect = (card) => {
         handleCardClick(card);
         handleSelection();
