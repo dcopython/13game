@@ -14,7 +14,8 @@ const App = () => {
     const [decks, setDecks] = useState([]);
     const [playedCards, setPlayedCards] = useState({
         lastPlayedBy: null,
-        cards: []
+        lastPlayedCards: [],
+        cardPile: [],
     });
 
     // message board state
@@ -121,7 +122,8 @@ const App = () => {
                     // place deck into played pile
                     setPlayedCards({
                         lastPlayedBy: i,
-                        cards: ['3S']
+                        lastPlayedCards: ['3S'],
+                        cardPile: ['3S']
                     });
 
                     // pass on deck number to function to assign next player
@@ -236,7 +238,7 @@ const App = () => {
                     alertMsg={alertMsg} 
                     setAlertMsg={setAlertMsg} 
                 />
-                {playedCards.cards.length === 0 ? 'Loading' : <PlayedCardsPile pile={playedCards.cards} />}
+                {playedCards.cards.length === 0 ? 'Loading' : <PlayedCardsPile pile={playedCards.cardPile} />}
             </div>
         </div>
     )
