@@ -3,7 +3,7 @@ import multiplePatternCheck from '../client/gameplay/multiplePatternCheck.js';
 describe('1 card', () => {
     it('returns single for a single card', () => {
         const input = ['9S'];
-        expect(multiplePatternCheck(input)).toEqual('pair');
+        expect(multiplePatternCheck(input)).toEqual('single');
     });
 });
 

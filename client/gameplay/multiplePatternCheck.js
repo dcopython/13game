@@ -5,7 +5,6 @@
 */
 const multiplePatternCheck = (cards) => {
     const sequence = '345678910JQKA2';
-
     const values = cards.map((card) => {
         if (card.length === 2) {
             return card.slice(0,1);
