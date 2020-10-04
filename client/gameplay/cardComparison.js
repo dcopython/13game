@@ -1,6 +1,12 @@
 import checkCardValue from './checkCardValue.js';
 
-// check cards for valid move
+/* 
+    Used to compare the value of the cards about to be played to the values of the
+    last played cards in the played pile. If it's higher, return true.
+    If not, return false
+    @param {string[]} cardsToBePlayed - passed in array of cardnames 
+    @param {string[]} lastPlayedCards - array of cardnames from lastPlayedCards state
+*/
 const cardComparison = (cardsToBePlayed, lastPlayedCards) => {
     // check that amount of cards to play matches the amount of cards already played
     if (cardsToBePlayed.length !== lastPlayedCards.length) {
@@ -16,7 +22,7 @@ const cardComparison = (cardsToBePlayed, lastPlayedCards) => {
     }
 
     // compare last played card to the card about to be played to see if it's a valid move
-    if (currentCardValue > prevCardValue) {
+    if (currentValue > previousValue) {
         return true;
     } else {
         return false;
