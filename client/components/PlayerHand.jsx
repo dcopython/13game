@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Card from './Card.jsx';
 import cardComparison from '../gameplay/cardComparison.js';
+import multiplePatternCheck from '../gameplay/multiplePatternCheck.js';
 
 const PlayerHand = ({ 
     decks,
@@ -16,30 +17,28 @@ const PlayerHand = ({
     }) => {
     const [selectedCards, setSelectedCards] = useState([]);
 
-    // takes in card to be played and current player
-    // handles removing card from hand and moving to played pile
-    const playSingleCard = (card) => {
-        const hands = [...decks];
+    // handles removing cards from player hand and updating deck
+    const playCards = (cards, pattern) => {
+        const decksCopy = [...decks];
+        const hand = decksCopy[currentPlayer];
 
-        // find position of current card in hand
-        const index = hands[currentPlayer].indexOf(card);
-
-        // splice current card from currentHand
-        hands[currentPlayer].splice(index, 1);
-
-        // display what card was played
-        displayAlert('play', currentPlayer, card);
-
-        // update currentPlayer hand
+        for (let i = 0; i < cards.length; i++) {
+            const index = hand.indexOf(cards[i]); // find position of current card in hand
+            hand.splice(index, 1); // splice current card from player hand
+        }
+        
+        displayAlert('play', currentPlayer, cards);
         setPlayedCards({
             lastPlayedBy: currentPlayer,
-            cards: [...playedCards.cards, card]
-        })
+            lastPlayedCards: cards,
+            lastPattern: pattern,
+            cardPile: [...playedCards.cards, ...cards]
+        });
 
-        return hands;
+        return decksCopy;
     };
 
-    // handle player playing a card
+    // handles player selection of a individual card
     const handleCardClick = (card) => {
         const stateCopy = [...selectedCards];
         const previouslySelectedCard = stateCopy.indexOf(card);
@@ -56,33 +55,41 @@ const PlayerHand = ({
     };
 
     const handlePlayButton = () => {
-        let validPlay = false;
-
-        const updateHandAndTurn = () => {
-            let hands = playSingleCard(card);
-            setDecks(hands);
-
-            if (openPlay === true) {
-                setOpenPlay(false);
-            }
-
-            changePlayerTurn();
+        let verifyPlay = false;
+        const results = {
+            true: updateHandAndTurn(),
+            false: displayAlert('invalid'),
+            'length': displayAlert('length')
         };
 
-        // only register clicks if it's player 0's turn
-        // allow player 0 to play any card if it's their turn and it's an open play
+        const updateHandAndTurn = () => {
+            // check if selected cards are a valid pattern before playing them
+            const pattern = multiplePatternCheck(selectedCards);
+            
+            if (pattern === false) {
+                displayAlert('badPattern');
+            } else {
+                const hands = playCards(selectedCards, pattern);
+                setDecks(hands);
+                setSelectedCards([]);
+    
+                if (openPlay === true) {
+                    setOpenPlay(false);
+                }
+    
+                changePlayerTurn();
+            }
+        };
+
+        /* only register clicks if it's player 0's turn, allow player 0 to play
+        any card if it's open play on their turn */
         if (currentPlayer === 0 && openPlay === true) {
             updateHandAndTurn();
         }
         else if (currentPlayer === 0) {
             // if not open play, check card values first
-            validPlay = cardComparison(card, playedCards.cards);
-
-            if (validPlay === true) {
-                updateHandAndTurn();
-            } else {
-                displayAlert('invalid');
-            }
+            verifyPlay = cardComparison(selectedCards, playedCards.lastPlayedCards);
+            results[verifyPlay];
         }
     };
 

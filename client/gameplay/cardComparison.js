@@ -1,5 +1,4 @@
 import checkCardValue from './checkCardValue.js';
-
 /* 
     Used to compare the value of the cards about to be played to the values of the
     last played cards in the played pile. If it's higher, return true.

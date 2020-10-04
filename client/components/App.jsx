@@ -15,6 +15,7 @@ const App = () => {
     const [playedCards, setPlayedCards] = useState({
         lastPlayedBy: null,
         lastPlayedCards: [],
+        lastPattern: null,
         cardPile: [],
     });
 
@@ -123,6 +124,7 @@ const App = () => {
                     setPlayedCards({
                         lastPlayedBy: i,
                         lastPlayedCards: ['3S'],
+                        lastPattern: 'single',
                         cardPile: ['3S']
                     });
 
