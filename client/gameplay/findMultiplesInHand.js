@@ -39,11 +39,50 @@ const findMultiplesInHand = (cards, pattern, lastPlayedCards) => {
     
         return combos[pattern];
     } else {
+        let result = [];
+
+        // counts the number of similar cards and groups them by value
+        const count = cards.reduce((acc, card) => {
+            let value = card.length === 2 ? card.slice(0, 1) : card.slice(0, 2);
+            acc[value] === undefined ? acc[value] = [card] : acc[value].push(card);
+            return acc;
+        }, {});
+
         // get the length of the current straight
+        const length = lastPlayedCards.length;
 
-        // get the value of the first card in that straight
-
+        // figure out what card the straight starts with
+        const opponentCard = lastPlayedCards[0];
+        const opponentCardFace = opponentCard.length === 2 ? opponentCard.slice(0, 1) : opponentCard.slice(0, 2);
+        
         // loop through hand starting initial value looking for sequential cards
+        // index will tell us where in the sequence to start checking
+        const sequence = ['3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+        let startingIndex = sequence.indexOf(opponentCardFace) + 1;
+        let index = startingIndex;
+
+        while (result.length !== length) {
+            // if startingIndex reaches the end of array, no straights exist, break out of loop
+            if (startingIndex === 11) {
+                return false;
+            } else {
+                // check if value at index in sequence array exists in count object
+                // if it does, push the last card in the array at that key into straight array
+                if (count[sequence[index]] !== undefined) {
+                    const current = count[sequence[index]];
+                    result.push(current[current.length - 1]);
+                    index += 1;
+                } else {
+                    // if we don't find a number that's in sequential order, reset the whole result array
+                    // and start finding a new straight at new index
+                    result = [];
+                    startingIndex += 1;
+                    index = startingIndex;
+                }
+            }
+        }
+
+        return result;
     }
 };
 
