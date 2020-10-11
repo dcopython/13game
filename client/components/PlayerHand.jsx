@@ -27,14 +27,23 @@ const PlayerHand = ({
             hand.splice(index, 1); // splice current card from player hand
         }
         
+        if (pattern === 'single') {
+            setPlayedCards({
+                lastPlayedBy: currentPlayer,
+                lastPlayedCards: cards,
+                lastPattern: pattern,
+                cardPile: [...playedCards.lastPlayedCards, cards]
+            });
+        } else {
+            setPlayedCards({
+                lastPlayedBy: currentPlayer,
+                lastPlayedCards: cards,
+                lastPattern: pattern,
+                cardPile: [...playedCards.lastPlayedCards, ...cards]
+            });
+        }
+        
         displayAlert('play', currentPlayer, cards);
-        setPlayedCards({
-            lastPlayedBy: currentPlayer,
-            lastPlayedCards: cards,
-            lastPattern: pattern,
-            cardPile: [...playedCards.cards, ...cards]
-        });
-
         return decksCopy;
     };
 
@@ -56,11 +65,6 @@ const PlayerHand = ({
 
     const handlePlayButton = () => {
         let verifyPlay = false;
-        const results = {
-            true: updateHandAndTurn(),
-            false: displayAlert('invalid'),
-            'length': displayAlert('length')
-        };
 
         const updateHandAndTurn = () => {
             // check if selected cards are a valid pattern before playing them
@@ -81,6 +85,12 @@ const PlayerHand = ({
             }
         };
 
+        const results = {
+            true: updateHandAndTurn(),
+            false: displayAlert('invalid'),
+            'length': displayAlert('length')
+        };
+
         /* only register clicks if it's player 0's turn, allow player 0 to play
         any card if it's open play on their turn */
         if (currentPlayer === 0 && openPlay === true) {
@@ -88,6 +98,10 @@ const PlayerHand = ({
         }
         else if (currentPlayer === 0) {
             // if not open play, check card values first
+            console.log({
+                selectedCards,
+                playedCards
+            })
             verifyPlay = cardComparison(selectedCards, playedCards.lastPlayedCards);
             results[verifyPlay];
         }

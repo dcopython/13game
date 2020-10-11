@@ -18,7 +18,7 @@ const output = {
 };
 
 const combos = {
-    'single': ['4H', '5C', '6S', '10S'],
+    'single': ['4H', '5C', '6S', '7H', '10S'],
     'pair': [['3S', '3D'], ['KS', 'KD']],
     'triple': [['JS', 'JD', 'JH']],
     'quad': [['9S', '9C', '9D', '9H']]
@@ -42,5 +42,9 @@ describe('find multiples in a hand', () => {
     it('returns false if there is no better straight in current hand', () => {
         const lastPlayed = ['JD', 'QH', 'KC', 'AD'];
         expect(findMultiples(input, 'straight', lastPlayed)).toEqual(false);
+    });
+
+    it('returns object with all combos if pattern is all', () => {
+        expect(findMultiples(input, 'all')).toEqual(combos);
     });
 });

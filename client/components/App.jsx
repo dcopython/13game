@@ -240,7 +240,7 @@ const App = () => {
                     alertMsg={alertMsg} 
                     setAlertMsg={setAlertMsg} 
                 />
-                {playedCards.cards.length === 0 ? 'Loading' : <PlayedCardsPile pile={playedCards.cardPile} />}
+                {playedCards.lastPlayedCards.length === 0 ? 'Loading' : <PlayedCardsPile pile={playedCards.cardPile} />}
             </div>
         </div>
     )

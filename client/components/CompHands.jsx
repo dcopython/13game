@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import Card from './Card.jsx';
 import checkCardValue from '../gameplay/checkCardValue.js';
+import findMultiples from '../gameplay/findMultiplesInHand.js';
 
 const CompHands = ({ 
     decks,
@@ -15,26 +16,50 @@ const CompHands = ({
     setOpenPlay
     }) => {
     // plays the lowest card in the computer's hand
-    const playLowestCard = (deck, player, card) => {
+    const playCards = (deck, player, cards, pattern) => {
         const hand = deck[player];
-        const index = hand.indexOf(card);
-        hand.splice(index, 1);
-        setPlayedCards({
-            lastPlayedBy: player,
-            cards: [...playedCards.cards, card]
-        })
+
+        for (let i = 0; i < cards.length; i++) {
+            const index = hand.indexOf(cards[i]);    
+            hand.splice(index, 1);
+        };
+
+        console.log('cards: ', cards);
+
+        if (pattern === 'single') {
+            setPlayedCards({
+                lastPlayedBy: player,
+                lastPlayedCards: cards,
+                lastPattern: pattern,
+                cardPile: [...playedCards.lastPlayedCards, cards]
+            });
+        } else {
+            setPlayedCards({
+                lastPlayedBy: player,
+                lastPlayedCards: cards,
+                lastPattern: pattern,
+                cardPile: [...playedCards.lastPlayedCards, ...cards]
+            });
+        }
+        
         setDecks(deck);
-        displayAlert('play', player, card);
+        displayAlert('play', player, cards);
     }
 
     // handles computer's turn during open play
     const compOpenPlay = (deck, player) => {
         const hand = deck[player];
-        // const sortedHand = hand.sort((a, b) => {
-        //     return checkCardValue(a) - checkCardValue(b);
-        // });
-        console.log('compOpenPlay executed');
-        playLowestCard(deck, player, hand[0]);
+        const results = findMultiples(hand, 'all');
+        
+        if (results['quad'].length > 0) {
+            playCards(deck, player, results['quad'][0], 'quad');
+        } else if (results['triple'].length > 0) {
+            playCards(deck, player, results['triple'][0], 'triple');
+        } else if (results['pair'].length > 0) {
+            playCards(deck, player, results['pair'][0], 'pair');
+        } else {
+            playCards(deck, player, results['single'][0], 'single');
+        }
     };
 
     // controls computer's play
@@ -48,53 +73,77 @@ const CompHands = ({
             setOpenPlay(false);
             changePlayerTurn();
         } else {
-            // find last played card and get value of it
-            const prevCard = playedCards.cards[playedCards.cards.length - 1];
-            const prevCardValue = checkCardValue(prevCard);
-        
-            // loop through current hand and find a card with the closest value and play it
-            // get current player's hand
-            const currentHand = decksCopy[currentPlayer];
-            console.log('current hand: ', currentHand);
-        
-            let sortedHand = [];
-            // for each card, find the value and push any card that can beat previous card to sorted hand
-            currentHand.forEach((card) => {
-                const currentCardValue = checkCardValue(card);
-                
-                if (currentCardValue > prevCardValue) {
-                    sortedHand.push(card);
+            // get the last pattern that was played
+            const pattern = playedCards.lastPattern || 'single';
+
+            // check if computer hand has cards that match the current pattern
+            const result = findMultiples(decksCopy[currentPlayer], pattern, playedCards.lastPlayedCards);
+
+            const sortedResult = result.sort((a, b) => {
+                if (pattern !== 'single') {
+                    let totalA = 0;
+                    let totalB = 0;
+                    console.log('sorting: ', a, b);
+
+                    for (let i = 0; i < a.length; i++) {
+                        totalA += checkCardValue(a[i]);
+                        totalB += checkCardValue(b[i]);
+                    }
+
+                    return totalA - totalB;
+                } else {
+                    return checkCardValue(a) - checkCardValue(b);
                 }
             });
+
+            console.log({
+                pattern,
+                sortedResult
+            });
         
-            console.log('pre-sorted: ', sortedHand);
-        
-            // sort by smallest value difference from previous card
-            // sortedHand = sortedHand.sort((a, b) => {
-            //     return checkCardValue(a) - checkCardValue(b);
-            // });
-        
-            // console.log('post-sorted: ', sortedHand);
-        
-            // computer will pass if sortedHand is empty
-            if (sortedHand.length === 0) {
-                displayAlert('pass', currentPlayer);
-                const count = passTurn();
-                
-                // only change player turn if there hasn't been 3 passes already
-                if (count < 3) {
-                    changePlayerTurn();
+            // get value of last played cards
+            const valueToBeat = playedCards.lastPlayedCards.reduce((total, card) => {
+                total += checkCardValue(card);
+                return total;
+            }, 0);
+
+            // look through result array to see if there's any combos that beat old value
+            const currentValue = sortedResult.reduce((highest, cards, i) => {
+                let total = 0;
+
+                if (highest[0] > valueToBeat) {
+                    return highest;
+                } else {
+                    if (pattern === 'single') {
+                        total += checkCardValue(cards);
+                    } else {
+                        cards.forEach((card) => {
+                            total += checkCardValue(card);
+                        });
+                    }
+    
+                    if (total > valueToBeat) {
+                        highest[0] = total;
+                        highest[1] = i;
+                    }
+    
+                    return highest;
                 }
-            } else { // otherwise, take card with lowest difference, remove it from current hand and place into played pile
-                const index = currentHand.indexOf(sortedHand[0]);
-                currentHand.splice(index, 1);
-                displayAlert('play', currentPlayer, sortedHand[0]);
-                setPlayedCards({
-                    lastPlayedBy: currentPlayer,
-                    cards: [...playedCards.cards, sortedHand[0]]
-                })
-                setDecks(decksCopy);
-                changePlayerTurn();
+            }, [0, 0])
+
+            console.log({
+                valueToBeat,
+                currentValue
+            });
+
+            // if current val is higher than value to beat 
+            if (currentValue[0] > valueToBeat) {
+                const index = currentValue[1];
+                const cardsToBePlayed = result[index];
+                playCards(decksCopy, currentPlayer, cardsToBePlayed, pattern);
+
+            } else {
+                passTurn();
             }
         }
     };
@@ -103,11 +152,12 @@ const CompHands = ({
         // skip computer turn if their hand is empty
         if (currentPlayer > 0 && decks[currentPlayer].length === 0) {
             changePlayerTurn();
-        } else if (currentPlayer > 0) {
-            setTimeout(() => {
-                playCompHand();  
-            }, 2000);
         } 
+        // else if (currentPlayer > 0) {
+        //     setTimeout(() => {
+        //         playCompHand();  
+        //     }, 2000);
+        // } 
     },[currentPlayer])
 
     return (

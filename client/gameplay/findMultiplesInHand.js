@@ -36,8 +36,12 @@ const findMultiplesInHand = (cards, pattern, lastPlayedCards) => {
                 combos['quad'].push(count[key]);
             }
         }
-    
-        return combos[pattern];
+
+        if (pattern === 'all') {
+            return combos;
+        } else {
+            return combos[pattern];
+        }
     } else {
         let result = [];
 

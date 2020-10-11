@@ -23,7 +23,7 @@ const MessageBoard = ({
                 'open': 'All other players have passed, play any card combination',
                 'compOpen': `All other players have passed, Player ${player + 1} will play any card`,
                 'invalid': 'Value is too low, please pick a higher value card or card combo',
-                'length': 'The amount of cards you are trying to play does not match current cards in play',
+                'length': 'The amount of cards you are trying to play does not match current amount of cards in play',
                 'badPattern': 'The combo you are trying to play does not match current combo in play'
             };
     
