@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const Card = ({ card, handleCardClick, showFace }) => {
+const Card = ({ card, handleCardClick, showFace, resetHand }) => {
     const [selected, setSelected] = useState(false);
 
     const handleSelection = () => {
@@ -13,6 +13,12 @@ const Card = ({ card, handleCardClick, showFace }) => {
         handleCardClick(card);
         handleSelection();
     }
+
+    useEffect(() => {
+        if (resetHand === true) {
+            setSelected(false);
+        }
+    }, [resetHand])
 
     if (showFace === true) {
         return (

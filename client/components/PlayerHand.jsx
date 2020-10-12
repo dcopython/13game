@@ -16,11 +16,16 @@ const PlayerHand = ({
     setOpenPlay,
     }) => {
     const [selectedCards, setSelectedCards] = useState([]);
+    const [resetHand, setResetHand] = useState(false);
 
     // handles removing cards from player hand and updating deck
     const playCards = (cards, pattern) => {
         const decksCopy = [...decks];
         const hand = decksCopy[currentPlayer];
+
+        if (!Array.isArray(cards)) {
+            cards = [cards];
+        } 
 
         for (let i = 0; i < cards.length; i++) {
             const index = hand.indexOf(cards[i]); // find position of current card in hand
@@ -64,7 +69,7 @@ const PlayerHand = ({
     };
 
     const handlePlayButton = () => {
-        let verifyPlay = false;
+        let verifyPlay = null;
 
         const updateHandAndTurn = () => {
             // check if selected cards are a valid pattern before playing them
@@ -75,6 +80,7 @@ const PlayerHand = ({
             } else {
                 const hands = playCards(selectedCards, pattern);
                 setDecks(hands);
+                setResetHand(true);
                 setSelectedCards([]);
     
                 if (openPlay === true) {
@@ -87,8 +93,8 @@ const PlayerHand = ({
 
         const results = {
             true: updateHandAndTurn(),
-            false: displayAlert('invalid'),
-            'length': displayAlert('length')
+            // false: displayAlert('invalid'),
+            // 'length': displayAlert('length')
         };
 
         /* only register clicks if it's player 0's turn, allow player 0 to play
@@ -103,7 +109,16 @@ const PlayerHand = ({
                 playedCards
             })
             verifyPlay = cardComparison(selectedCards, playedCards.lastPlayedCards);
-            results[verifyPlay];
+            console.log('verify play: ', verifyPlay);
+            //results[verifyPlay];
+
+            if (verifyPlay === true) {
+                updateHandAndTurn();
+            } else if (verifyPlay === false) {
+                displayAlert('invalid');
+            } else {
+                displayAlert('length');
+            }
         }
     };
 
@@ -126,9 +141,13 @@ const PlayerHand = ({
     }, [openPlay, currentPlayer]);
 
     useEffect(() => {
-        // player 1's turn if their hand is empty
+        // skip player 1's turn if their hand is empty
         if (decks[0].length === 0 && currentPlayer === 0) {
             changePlayerTurn();
+        }
+
+        if (currentPlayer === 0) {
+            setResetHand(false);
         }
     }, [currentPlayer]);
 
@@ -137,7 +156,13 @@ const PlayerHand = ({
             <h5>Your Hand:</h5>
             <div className='hand hhand-compact'>
                 {decks[0].map((card, i) => (
-                    <Card card={card} key={i} showFace={true} handleCardClick={handleCardClick} />
+                    <Card 
+                        card={card}
+                        key={i} 
+                        showFace={true} 
+                        handleCardClick={handleCardClick}
+                        resetHand={resetHand}
+                    />
                 ))}
             </div>
             <button type='button' onClick={handlePlayButton}>Play</button>
