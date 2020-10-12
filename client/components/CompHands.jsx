@@ -19,12 +19,16 @@ const CompHands = ({
     const playCards = (deck, player, cards, pattern) => {
         const hand = deck[player];
 
+        if (!Array.isArray(cards)) {
+            cards = [cards];
+        }
+
         for (let i = 0; i < cards.length; i++) {
             const index = hand.indexOf(cards[i]);    
             hand.splice(index, 1);
         };
 
-        console.log('cards: ', cards);
+        console.log('hand: ', hand);
 
         if (pattern === 'single') {
             setPlayedCards({
@@ -139,11 +143,16 @@ const CompHands = ({
             // if current val is higher than value to beat 
             if (currentValue[0] > valueToBeat) {
                 const index = currentValue[1];
-                const cardsToBePlayed = result[index];
+                const cardsToBePlayed = sortedResult[index];
                 playCards(decksCopy, currentPlayer, cardsToBePlayed, pattern);
+                changePlayerTurn();
 
             } else {
-                passTurn();
+                displayAlert('pass', currentPlayer);
+                const count = passTurn();
+                if (count < 3) {
+                    changePlayerTurn();
+                }
             }
         }
     };
