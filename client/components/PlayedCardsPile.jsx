@@ -1,12 +1,12 @@
 import React from 'react';
 import Card from './Card.jsx';
 
-const PlayedCardsPile = (props) => {
-    const { pile } = props;
-
+const PlayedCardsPile = ({ pile }) => {
     return (
-        <div className='playedPile'>
-            <Card card={pile[pile.length - 1]} showFace={true} />
+        <div className='playedPile hand hhand-compact'>
+            {pile.map((card) => (
+                <Card card={card} showFace={true} />
+            ))}
         </div>
     )
 }
