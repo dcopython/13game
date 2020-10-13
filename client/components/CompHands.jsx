@@ -35,14 +35,14 @@ const CompHands = ({
                 lastPlayedBy: player,
                 lastPlayedCards: cards,
                 lastPattern: pattern,
-                cardPile: [...playedCards.lastPlayedCards, cards]
+                cardPile: [...playedCards.cardPile, ...cards]
             });
         } else {
             setPlayedCards({
                 lastPlayedBy: player,
                 lastPlayedCards: cards,
                 lastPattern: pattern,
-                cardPile: [...playedCards.lastPlayedCards, ...cards]
+                cardPile: [...playedCards.cardPile, ...cards]
             });
         }
         
@@ -83,75 +83,85 @@ const CompHands = ({
             // check if computer hand has cards that match the current pattern
             const result = findMultiples(decksCopy[currentPlayer], pattern, playedCards.lastPlayedCards);
 
-            const sortedResult = result.sort((a, b) => {
-                if (pattern !== 'single') {
-                    let totalA = 0;
-                    let totalB = 0;
-                    console.log('sorting: ', a, b);
-
-                    for (let i = 0; i < a.length; i++) {
-                        totalA += checkCardValue(a[i]);
-                        totalB += checkCardValue(b[i]);
-                    }
-
-                    return totalA - totalB;
-                } else {
-                    return checkCardValue(a) - checkCardValue(b);
-                }
-            });
-
-            console.log({
-                pattern,
-                sortedResult
-            });
-        
-            // get value of last played cards
-            const valueToBeat = playedCards.lastPlayedCards.reduce((total, card) => {
-                total += checkCardValue(card);
-                return total;
-            }, 0);
-
-            // look through result array to see if there's any combos that beat old value
-            const currentValue = sortedResult.reduce((highest, cards, i) => {
-                let total = 0;
-
-                if (highest[0] > valueToBeat) {
-                    return highest;
-                } else {
-                    if (pattern === 'single') {
-                        total += checkCardValue(cards);
-                    } else {
-                        cards.forEach((card) => {
-                            total += checkCardValue(card);
-                        });
-                    }
-    
-                    if (total > valueToBeat) {
-                        highest[0] = total;
-                        highest[1] = i;
-                    }
-    
-                    return highest;
-                }
-            }, [0, 0])
-
-            console.log({
-                valueToBeat,
-                currentValue
-            });
-
-            // if current val is higher than value to beat 
-            if (currentValue[0] > valueToBeat) {
-                const index = currentValue[1];
-                const cardsToBePlayed = sortedResult[index];
-                playCards(decksCopy, currentPlayer, cardsToBePlayed, pattern);
-                changePlayerTurn();
-
-            } else {
+            console.log('result: ', result);
+            
+            if (result === false) {
                 displayAlert('pass', currentPlayer);
                 const count = passTurn();
                 if (count < 3) {
                     changePlayerTurn();
+                }
+            } else {
+                const sortedResult = result.sort((a, b) => {
+                    if (pattern !== 'single') {
+                        let totalA = 0;
+                        let totalB = 0;
+                        console.log('sorting: ', a, b);
+    
+                        for (let i = 0; i < a.length; i++) {
+                            totalA += checkCardValue(a[i]);
+                            totalB += checkCardValue(b[i]);
+                        }
+    
+                        return totalA - totalB;
+                    } else {
+                        return checkCardValue(a) - checkCardValue(b);
+                    }
+                });
+    
+                console.log({
+                    pattern,
+                    sortedResult
+                });
+            
+                // get value of last played cards
+                const valueToBeat = playedCards.lastPlayedCards.reduce((total, card) => {
+                    total += checkCardValue(card);
+                    return total;
+                }, 0);
+    
+                // look through result array to see if there's any combos that beat old value
+                const currentValue = sortedResult.reduce((highest, cards, i) => {
+                    let total = 0;
+    
+                    if (highest[0] > valueToBeat) {
+                        return highest;
+                    } else {
+                        if (pattern === 'single') {
+                            total += checkCardValue(cards);
+                        } else {
+                            cards.forEach((card) => {
+                                total += checkCardValue(card);
+                            });
+                        }
+        
+                        if (total > valueToBeat) {
+                            highest[0] = total;
+                            highest[1] = i;
+                        }
+        
+                        return highest;
+                    }
+                }, [0, 0])
+    
+                console.log({
+                    valueToBeat,
+                    currentValue
+                });
+    
+                // if current val is higher than value to beat 
+                if (currentValue[0] > valueToBeat) {
+                    const index = currentValue[1];
+                    const cardsToBePlayed = sortedResult[index];
+                    playCards(decksCopy, currentPlayer, cardsToBePlayed, pattern);
+                    changePlayerTurn();
+    
+                } else {
+                    displayAlert('pass', currentPlayer);
+                    const count = passTurn();
+                    if (count < 3) {
+                        changePlayerTurn();
+                    }
                 }
             }
         }
