@@ -131,11 +131,11 @@ const PlayerHand = ({
         }
     };
 
-    useEffect(() => {
-        if (openPlay === true && currentPlayer === 0) {
-            displayAlert('open', currentPlayer);
-        }
-    }, [openPlay, currentPlayer]);
+    // useEffect(() => {
+    //     if (openPlay === true && currentPlayer === 0) {
+    //         displayAlert('open', currentPlayer);
+    //     }
+    // }, [openPlay, currentPlayer]);
 
     useEffect(() => {
         // skip player 1's turn if their hand is empty
