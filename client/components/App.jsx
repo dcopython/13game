@@ -100,6 +100,8 @@ const App = () => {
             setOpenPlay(true);
             setPassedPlayers(new Array(4).fill(false));
             setCurrentPlayer(playedCards.lastPlayedBy);
+            playedCards.lastPlayedBy === 0 ? 
+                displayAlert('open', playedCards.lastPlayedBy) : displayAlert('compOpen', playedCards.lastPlayedBy);
         } else {
             // update passed array with latest passed player
             setPassedPlayers(passes);
