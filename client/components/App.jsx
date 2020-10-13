@@ -170,7 +170,6 @@ const App = () => {
     // used to start the game
     useEffect(() => {
         const deck = startGame(deck);
-
         setDecks(deck);
         setIsDealing(false);
     },[]);
@@ -240,7 +239,7 @@ const App = () => {
                     alertMsg={alertMsg} 
                     setAlertMsg={setAlertMsg} 
                 />
-                {playedCards.lastPlayedCards.length === 0 ? 'Loading' : <PlayedCardsPile pile={playedCards.cardPile} />}
+                {playedCards.lastPlayedCards.length === 0 ? 'Loading' : <PlayedCardsPile pile={playedCards.lastPlayedCards} />}
             </div>
         </div>
     )
