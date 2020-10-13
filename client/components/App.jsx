@@ -204,7 +204,7 @@ const App = () => {
             <div className='placingBoard'>
                 <PlacingBoard endGame={endGame} placing={placing} />
             </div>
-            <div className='main'>
+            <div className={endGame === false ? 'main' : 'main hide'}>
                 { isDealing === true ? 'Dealing cards...' : 
                     <CompHands 
                         decks={decks}
