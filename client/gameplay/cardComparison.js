@@ -7,7 +7,6 @@ import checkCardValue from './checkCardValue.js';
     @param {string[]} lastPlayedCards - array of cardnames from lastPlayedCards state
 */
 const cardComparison = (cardsToBePlayed, lastPlayedCards) => {
-    console.log('inside func: ', cardsToBePlayed.length, lastPlayedCards.length);
     // check that amount of cards to play matches the amount of cards already played
     if (cardsToBePlayed.length !== lastPlayedCards.length) {
         return 'length';
