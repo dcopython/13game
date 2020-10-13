@@ -9,6 +9,11 @@
 	padding-bottom: 10px;
 }
 
+/* MAIN */
+.main.hide {
+    display: none;
+}
+
 /* HANDS */
 .hand {
     
