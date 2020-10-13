@@ -14,7 +14,9 @@ const App = () => {
     const [decks, setDecks] = useState([]);
     const [playedCards, setPlayedCards] = useState({
         lastPlayedBy: null,
-        cards: []
+        lastPlayedCards: [],
+        lastPattern: null,
+        cardPile: [],
     });
 
     // message board state
@@ -98,6 +100,8 @@ const App = () => {
             setOpenPlay(true);
             setPassedPlayers(new Array(4).fill(false));
             setCurrentPlayer(playedCards.lastPlayedBy);
+            playedCards.lastPlayedBy === 0 ? 
+                displayAlert('open', playedCards.lastPlayedBy) : displayAlert('compOpen', playedCards.lastPlayedBy);
         } else {
             // update passed array with latest passed player
             setPassedPlayers(passes);
@@ -121,7 +125,9 @@ const App = () => {
                     // place deck into played pile
                     setPlayedCards({
                         lastPlayedBy: i,
-                        cards: ['3S']
+                        lastPlayedCards: ['3S'],
+                        lastPattern: 'single',
+                        cardPile: ['3S']
                     });
 
                     // pass on deck number to function to assign next player
@@ -166,7 +172,6 @@ const App = () => {
     // used to start the game
     useEffect(() => {
         const deck = startGame(deck);
-
         setDecks(deck);
         setIsDealing(false);
     },[]);
@@ -201,7 +206,7 @@ const App = () => {
             <div className='placingBoard'>
                 <PlacingBoard endGame={endGame} placing={placing} />
             </div>
-            <div className='main'>
+            <div className={endGame === false ? 'main' : 'main hide'}>
                 { isDealing === true ? 'Dealing cards...' : 
                     <CompHands 
                         decks={decks}
@@ -236,7 +241,7 @@ const App = () => {
                     alertMsg={alertMsg} 
                     setAlertMsg={setAlertMsg} 
                 />
-                {playedCards.cards.length === 0 ? 'Loading' : <PlayedCardsPile pile={playedCards.cards} />}
+                {playedCards.lastPlayedCards.length === 0 ? 'Loading' : <PlayedCardsPile pile={playedCards.lastPlayedCards} />}
             </div>
         </div>
     )
