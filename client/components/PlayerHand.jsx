@@ -27,24 +27,29 @@ const PlayerHand = ({
             cards = [cards];
         } 
 
+        console.log('player cards: ', cards)
+        console.log('player hand before: ', hand)
+
         for (let i = 0; i < cards.length; i++) {
             const index = hand.indexOf(cards[i]); // find position of current card in hand
             hand.splice(index, 1); // splice current card from player hand
         }
+
+        console.log('player hand after: ', hand)
         
         if (pattern === 'single') {
             setPlayedCards({
                 lastPlayedBy: currentPlayer,
                 lastPlayedCards: cards,
                 lastPattern: pattern,
-                cardPile: [...playedCards.lastPlayedCards, cards]
+                cardPile: [...playedCards.cardPile, ...cards]
             });
         } else {
             setPlayedCards({
                 lastPlayedBy: currentPlayer,
                 lastPlayedCards: cards,
                 lastPattern: pattern,
-                cardPile: [...playedCards.lastPlayedCards, ...cards]
+                cardPile: [...playedCards.cardPile, ...cards]
             });
         }
         
@@ -91,12 +96,6 @@ const PlayerHand = ({
             }
         };
 
-        const results = {
-            true: updateHandAndTurn(),
-            // false: displayAlert('invalid'),
-            // 'length': displayAlert('length')
-        };
-
         /* only register clicks if it's player 0's turn, allow player 0 to play
         any card if it's open play on their turn */
         if (currentPlayer === 0 && openPlay === true) {
@@ -109,8 +108,6 @@ const PlayerHand = ({
                 playedCards
             })
             verifyPlay = cardComparison(selectedCards, playedCards.lastPlayedCards);
-            console.log('verify play: ', verifyPlay);
-            //results[verifyPlay];
 
             if (verifyPlay === true) {
                 updateHandAndTurn();
@@ -144,9 +141,7 @@ const PlayerHand = ({
         // skip player 1's turn if their hand is empty
         if (decks[0].length === 0 && currentPlayer === 0) {
             changePlayerTurn();
-        }
-
-        if (currentPlayer === 0) {
+        } else if (currentPlayer === 0) {
             setResetHand(false);
         }
     }, [currentPlayer]);
