@@ -5,7 +5,7 @@ const PlayedCardsPile = ({ pile }) => {
     return (
         <div className='playedPile hand hhand-compact'>
             {pile.map((card) => (
-                <Card card={card} showFace={true} />
+                <Card card={card} showFace={true} key={card}/>
             ))}
         </div>
     )
