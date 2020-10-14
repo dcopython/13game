@@ -35,7 +35,7 @@ const MessageBoard = ({
                 
                 newMessages.unshift(msgs[msg[0]]);
                 setMessages(newMessages);
-                alertMsg.pop();
+                alertMsg.shift();
                 setAlertMsg(alertMsg);
             }
             setAlertMsg(null);
@@ -44,7 +44,9 @@ const MessageBoard = ({
 
     return (
         <div className='messages'>
+            <h5>Turn Status:</h5>
             <div className='game-status'>{`Player ${currentPlayer + 1}'s Turn`}</div>
+            <h5>Game Status:</h5>
             <ul id='alert'>
                 {messages.map((msg, i) => {
                     return <li key={i}>{msg}</li>

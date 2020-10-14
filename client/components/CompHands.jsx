@@ -28,8 +28,6 @@ const CompHands = ({
             hand.splice(index, 1);
         };
 
-        console.log('hand: ', hand);
-
         if (pattern === 'single') {
             setPlayedCards({
                 lastPlayedBy: player,
@@ -82,8 +80,6 @@ const CompHands = ({
 
             // check if computer hand has cards that match the current pattern
             const result = findMultiples(decksCopy[currentPlayer], pattern, playedCards.lastPlayedCards);
-
-            console.log('result: ', result);
             
             if (result === false) {
                 displayAlert('pass', currentPlayer);
@@ -96,8 +92,10 @@ const CompHands = ({
                     if (pattern !== 'single') {
                         let totalA = 0;
                         let totalB = 0;
-                        console.log('sorting: ', a, b);
-    
+                        console.log({
+                            a,
+                            b
+                        })
                         for (let i = 0; i < a.length; i++) {
                             totalA += checkCardValue(a[i]);
                             totalB += checkCardValue(b[i]);
@@ -109,10 +107,7 @@ const CompHands = ({
                     }
                 });
     
-                console.log({
-                    pattern,
-                    sortedResult
-                });
+                console.log('sorted: ', sortedResult);
             
                 // get value of last played cards
                 const valueToBeat = playedCards.lastPlayedCards.reduce((total, card) => {
@@ -129,11 +124,18 @@ const CompHands = ({
                     } else {
                         if (pattern === 'single') {
                             total += checkCardValue(cards);
+                        } else if (pattern === 'straight') {
+                            total += checkCardValue(cards);
+                            highest[0] += total;
+                            console.log('scores: ', total, i);
+                            return highest;
                         } else {
                             cards.forEach((card) => {
-                                total += checkCardValue(card);
+                                total += checkCardValue(cards[i]);
                             });
                         }
+
+                        
         
                         if (total > valueToBeat) {
                             highest[0] = total;
@@ -144,18 +146,17 @@ const CompHands = ({
                     }
                 }, [0, 0])
     
-                console.log({
-                    valueToBeat,
-                    currentValue
-                });
-    
                 // if current val is higher than value to beat 
                 if (currentValue[0] > valueToBeat) {
-                    const index = currentValue[1];
-                    const cardsToBePlayed = sortedResult[index];
+                    let cardsToBePlayed;
+                    if (pattern === 'straight') {
+                        cardsToBePlayed = sortedResult;
+                    } else {
+                        const index = currentValue[1];
+                        cardsToBePlayed = sortedResult[index];
+                    }
                     playCards(decksCopy, currentPlayer, cardsToBePlayed, pattern);
                     changePlayerTurn();
-    
                 } else {
                     displayAlert('pass', currentPlayer);
                     const count = passTurn();
@@ -172,31 +173,33 @@ const CompHands = ({
         if (currentPlayer > 0 && decks[currentPlayer].length === 0) {
             changePlayerTurn();
         } 
-        // else if (currentPlayer > 0) {
-        //     setTimeout(() => {
-        //         playCompHand();  
-        //     }, 2000);
-        // } 
+        else if (currentPlayer > 0) {
+            setTimeout(() => {
+                playCompHand();  
+            }, 2000);
+        } 
     },[currentPlayer])
 
     return (
         <div className='compHands-container'>
-            <div className='hand hhand-compact compTwo-hand'>
-                {decks[1].map((card, i) => (
-                    <Card card={card} key={i}/>
-                ))}
-            </div>
             <div className='hand hhand-compact compThree-hand'>
                 {decks[2].map((card, i) => (
                     <Card card={card} key={i}/>
                 ))}
             </div>
-            <div className='hand hhand-compact compFour-hand'>
-                {decks[3].map((card, i) => (
-                    <Card card={card} key={i}/>
-                ))}
+            <div className='two-four-container'>
+                <div className='hand hhand-compact compTwo-hand'>
+                    {decks[1].map((card, i) => (
+                        <Card card={card} key={i}/>
+                    ))}
+                </div>
+                <div className='hand hhand-compact compFour-hand'>
+                    {decks[3].map((card, i) => (
+                        <Card card={card} key={i}/>
+                    ))}
+                </div>
             </div>
-            <button className='computerTurn-btn' onClick={playCompHand}>Computer Turn</button>
+            {/* <button className='computerTurn-btn' onClick={playCompHand}>Computer Turn</button> */}
         </div>
     )
 };

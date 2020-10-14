@@ -97,6 +97,7 @@ const App = () => {
         // then change openPlay to true to signal that any card can be played
         // and reset passes state
         if (countPasses === passesNeededForOpenPlay) {
+            displayAlert('pass', currentPlayer);
             setOpenPlay(true);
             setPassedPlayers(new Array(4).fill(false));
             setCurrentPlayer(playedCards.lastPlayedBy);
@@ -166,7 +167,11 @@ const App = () => {
     };
 
     const displayAlert = (msgType, currentPlayer = null, card = null) => {
-        setAlertMsg([msgType, currentPlayer, card]);
+        if (alertMsg === null) {
+            setAlertMsg([[msgType, currentPlayer, card]]);
+        } else {
+            setAlertMsg([...alertMsg, [msgType, currentPlayer, card]]);
+        }
     };
 
     // used to start the game
@@ -203,9 +208,6 @@ const App = () => {
 
     return (
         <div>
-            <div className='placingBoard'>
-                <PlacingBoard endGame={endGame} placing={placing} />
-            </div>
             <div className={endGame === false ? 'main' : 'main hide'}>
                 { isDealing === true ? 'Dealing cards...' : 
                     <CompHands 
@@ -236,12 +238,15 @@ const App = () => {
                         setOpenPlay={setOpenPlay}
                     />
                 }
+                {playedCards.lastPlayedCards.length === 0 ? 'Loading' : <PlayedCardsPile pile={playedCards.lastPlayedCards} />}
+            </div>
+            <div className='boards'>
                 <MessageBoard 
                     currentPlayer={currentPlayer} 
                     alertMsg={alertMsg} 
                     setAlertMsg={setAlertMsg} 
                 />
-                {playedCards.lastPlayedCards.length === 0 ? 'Loading' : <PlayedCardsPile pile={playedCards.lastPlayedCards} />}
+                <PlacingBoard endGame={endGame} placing={placing} />
             </div>
         </div>
     )
