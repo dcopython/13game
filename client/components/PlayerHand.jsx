@@ -27,15 +27,15 @@ const PlayerHand = ({
             cards = [cards];
         } 
 
-        console.log('player cards: ', cards)
-        console.log('player hand before: ', hand)
+        // console.log('player cards: ', cards)
+        // console.log('player hand before: ', hand)
 
         for (let i = 0; i < cards.length; i++) {
             const index = hand.indexOf(cards[i]); // find position of current card in hand
             hand.splice(index, 1); // splice current card from player hand
         }
 
-        console.log('player hand after: ', hand)
+        // console.log('player hand after: ', hand)
         
         if (pattern === 'single') {
             setPlayedCards({
@@ -103,10 +103,10 @@ const PlayerHand = ({
         }
         else if (currentPlayer === 0) {
             // if not open play, check card values first
-            console.log({
-                selectedCards,
-                playedCards
-            })
+            // console.log({
+            //     selectedCards,
+            //     playedCards
+            // })
             verifyPlay = cardComparison(selectedCards, playedCards.lastPlayedCards);
 
             if (verifyPlay === true) {
@@ -131,12 +131,6 @@ const PlayerHand = ({
         }
     };
 
-    // useEffect(() => {
-    //     if (openPlay === true && currentPlayer === 0) {
-    //         displayAlert('open', currentPlayer);
-    //     }
-    // }, [openPlay, currentPlayer]);
-
     useEffect(() => {
         // skip player 1's turn if their hand is empty
         if (decks[0].length === 0 && currentPlayer === 0) {
@@ -160,8 +154,10 @@ const PlayerHand = ({
                     />
                 ))}
             </div>
-            <button type='button' onClick={handlePlayButton}>Play</button>
-            <button type='button' onClick={handlePlayerPass}>Pass</button>
+            <div className='playerHand-buttons'>
+                <button type='button' onClick={handlePlayButton}>Play</button>
+                <button type='button' onClick={handlePlayerPass}>Pass</button>
+            </div>
         </div>
     );
 }
