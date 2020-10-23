@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "build": "webpack -w",
+    "build": "webpack",
     "server-dev": "nodemon ./server/index.js",
     "server": "node ./server/index.js"
   },
