@@ -92,10 +92,7 @@ const CompHands = ({
                     if (pattern !== 'single') {
                         let totalA = 0;
                         let totalB = 0;
-                        console.log({
-                            a,
-                            b
-                        })
+
                         for (let i = 0; i < a.length; i++) {
                             totalA += checkCardValue(a[i]);
                             totalB += checkCardValue(b[i]);
@@ -107,7 +104,6 @@ const CompHands = ({
                     }
                 });
     
-                console.log('sorted: ', sortedResult);
             
                 // get value of last played cards
                 const valueToBeat = playedCards.lastPlayedCards.reduce((total, card) => {

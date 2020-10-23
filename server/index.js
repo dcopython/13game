@@ -1,4 +1,3 @@
-const { resolveSoa } = require('dns');
 const express = require('express');
 const path = require('path');
 const { getFriends, updateFriends } = require('../db/index.js');

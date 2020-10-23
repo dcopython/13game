@@ -30,7 +30,7 @@ const Card = ({ card, handleCardClick, showFace, resetHand }) => {
         )
     } else {
         return (
-            <img className='card' src={`cards/BLUE_BACK.svg`} />            
+            <img className='card' src={`cards/Blue_Back.svg`} />            
         )
     }
 };
