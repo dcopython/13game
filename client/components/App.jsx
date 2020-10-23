@@ -78,7 +78,6 @@ const App = () => {
 
     const passTurn = () => {
         const passes = [...passedPlayers];
-
         passes[currentPlayer] = true;
 
         // calculate # of players left in game and reduce amount of passes
@@ -208,6 +207,11 @@ const App = () => {
 
     return (
         <div>
+            <div>
+                <h2>Tien Len The Card Game!</h2>
+                <h5>Click on the card to select it and play it with the Play button or Pass button.</h5>
+                <h5>Refresh to start a new game!</h5>
+            </div>
             <div className={endGame === false ? 'main' : 'main hide'}>
                 { isDealing === true ? 'Dealing cards...' : 
                     <CompHands 

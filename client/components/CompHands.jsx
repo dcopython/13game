@@ -114,6 +114,8 @@ const CompHands = ({
                 // look through result array to see if there's any combos that beat old value
                 const currentValue = sortedResult.reduce((highest, cards, i) => {
                     let total = 0;
+
+                    console.log('cards: ', cards);
     
                     if (highest[0] > valueToBeat) {
                         return highest;
@@ -127,7 +129,7 @@ const CompHands = ({
                             return highest;
                         } else {
                             cards.forEach((card) => {
-                                total += checkCardValue(cards[i]);
+                                total += checkCardValue(card);
                             });
                         }
 

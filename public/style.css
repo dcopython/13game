@@ -75,7 +75,7 @@ body {
 /* PLAYED PILE */
 .playedPile {
     position: fixed;
-    top: 200px;
+    top: 340px;
     left: 380px
 }
 
