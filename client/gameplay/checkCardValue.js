@@ -20,7 +20,7 @@ const checkCardValue = (card) => {
         "S": 1,
         "C": 2,
         "D": 3,
-        "H": 4,
+        "H": 5,
     }
     
     // calculate face points
