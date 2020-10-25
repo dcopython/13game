@@ -68,11 +68,13 @@ const App = () => {
                 setCurrentPlayer(player + 1);
             }
         } else {
-            if (currentPlayer === 3) {
-                setCurrentPlayer(0);
-            } else {
-                setCurrentPlayer(currentPlayer + 1);
-            }
+            if (currentPlayer !== null) {
+                if (currentPlayer === 3) {
+                    setCurrentPlayer(0);
+                } else {
+                    setCurrentPlayer(currentPlayer + 1);
+                }
+            }  
         }
     };
 
@@ -98,8 +100,15 @@ const App = () => {
         if (countPasses === passesNeededForOpenPlay) {
             displayAlert('pass', currentPlayer);
             setOpenPlay(true);
+
+            // if last player that played card is out of game, set next player to whoever passed first
+            if (placing.includes(playedCards.lastPlayedBy)) {
+                setCurrentPlayer(passedPlayers.indexOf(true));
+            } else {
+                setCurrentPlayer(playedCards.lastPlayedBy);
+            }
+
             setPassedPlayers(new Array(4).fill(false));
-            setCurrentPlayer(playedCards.lastPlayedBy);
             playedCards.lastPlayedBy === 0 ? 
                 displayAlert('open', playedCards.lastPlayedBy) : displayAlert('compOpen', playedCards.lastPlayedBy);
         } else {
@@ -131,7 +140,7 @@ const App = () => {
                     });
 
                     // pass on deck number to function to assign next player
-                    changePlayerTurn(i);
+                    setCurrentPlayer(i);
                 }
             })
         });
@@ -149,9 +158,6 @@ const App = () => {
                 setPlacing(places);
             }
         });
-
-        // set currentplayer to null to stop turns
-        setCurrentPlayer(null);
 
         // set endgame to true to allow placing board to show
         setEndGame(true);
@@ -200,6 +206,10 @@ const App = () => {
     // used to stop game if there's three finishes
     useEffect(() => {
         if (placing.length === 3) {
+            // set currentplayer to null to stop turns
+            setCurrentPlayer(null);
+            console.log('setting current player to null: ', currentPlayer);
+
             // if three people have finished, show placing board
             stopGame();
         }
@@ -207,11 +217,6 @@ const App = () => {
 
     return (
         <div>
-            <div>
-                <h2>Tien Len The Card Game!</h2>
-                <h5>Click on the card to select it and play it with the Play button or Pass button.</h5>
-                <h5>Refresh to start a new game!</h5>
-            </div>
             <div className={endGame === false ? 'main' : 'main hide'}>
                 { isDealing === true ? 'Dealing cards...' : 
                     <CompHands 
