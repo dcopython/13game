@@ -131,20 +131,34 @@ const PlayerHand = ({
         }
     };
 
-    useEffect(() => {
-        if (currentPlayer !== null) {
-            console.log('player: ', currentPlayer);
-            console.log('PLAYER END GAME 1')
-            // skip player 1's turn if their hand is empty
-            if (decks[0].length === 0 && currentPlayer === 0) {
-                changePlayerTurn();
-            } else if (currentPlayer === 0) {
-                setResetHand(false);
-            }
-        } else {
-            console.log('PLAYER END GAME 2');
+    // useEffect(() => {
+    //     if (currentPlayer !== null) {
+    //         console.log('player: ', currentPlayer);
+    //         console.log('PLAYER END GAME 1')
+    //         // skip player 1's turn if their hand is empty
+    //         if (decks[0].length === 0 && currentPlayer === 0) {
+    //             changePlayerTurn();
+    //         } else if (currentPlayer === 0) {
+    //             setResetHand(false);
+    //         }
+    //     } else {
+    //         console.log('PLAYER END GAME 2');
+    //     }
+    // }, [currentPlayer]);
+
+    if (currentPlayer === 1) {
+        console.log('player: ', currentPlayer);
+        console.log('PLAYER END GAME 1')
+
+        if (resetHand === true) {
+            setResetHand(false);
         }
-    }, [currentPlayer]);
+
+        // skip player 1's turn if their hand is empty
+        if (decks[0].length === 0) {
+            changePlayerTurn();
+        }
+    }
 
     return (
         <div className='playerHand-container'>
