@@ -5,7 +5,6 @@ import PlayedCardsPile from './PlayedCardsPile.jsx';
 import PlacingBoard from './PlacingBoard.jsx';
 import MessageBoard from './MessageBoard.jsx';
 import cards from '../cards.js';
-import cardComparison from '../gameplay/cardComparison.js';
 import checkCardValue from '../gameplay/checkCardValue.js';
 
 const App = () => {
@@ -179,6 +178,15 @@ const App = () => {
         }
     };
 
+    function updatePlayedCards(player, cards, pattern) {
+        setPlayedCards({
+            lastPlayedBy: player,
+            lastPlayedCards: cards,
+            lastPattern: pattern,
+            cardPile: [...playedCards.cardPile, ...cards]
+        });
+    };
+
     // used to start the game
     useEffect(() => {
         const deck = startGame(deck);
@@ -223,7 +231,7 @@ const App = () => {
                         decks={decks}
                         setDecks={setDecks}
                         playedCards={playedCards}
-                        setPlayedCards={setPlayedCards}
+                        updatePlayedCards={updatePlayedCards}
                         currentPlayer={currentPlayer}
                         displayAlert={displayAlert}
                         changePlayerTurn={changePlayerTurn}
