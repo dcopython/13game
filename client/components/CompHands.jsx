@@ -9,11 +9,13 @@ const CompHands = ({
     playedCards,
     setPlayedCards,
     currentPlayer,
+    setCurrentPlayer,
     displayAlert,
     changePlayerTurn,
     passTurn,
     openPlay,
-    setOpenPlay
+    setOpenPlay,
+    endGame
     }) => {
     // plays the lowest card in the computer's hand
     const playCards = (deck, player, cards, pattern) => {
@@ -28,22 +30,28 @@ const CompHands = ({
             hand.splice(index, 1);
         };
 
-        if (pattern === 'single') {
-            setPlayedCards({
-                lastPlayedBy: player,
-                lastPlayedCards: cards,
-                lastPattern: pattern,
-                cardPile: [...playedCards.cardPile, ...cards]
-            });
-        } else {
-            setPlayedCards({
-                lastPlayedBy: player,
-                lastPlayedCards: cards,
-                lastPattern: pattern,
-                cardPile: [...playedCards.cardPile, ...cards]
-            });
-        }
-        
+        // if (pattern === 'single') {
+        //     setPlayedCards({
+        //         lastPlayedBy: player,
+        //         lastPlayedCards: cards,
+        //         lastPattern: pattern,
+        //         cardPile: [...playedCards.cardPile, ...cards]
+        //     });
+        // } else {
+        //     setPlayedCards({
+        //         lastPlayedBy: player,
+        //         lastPlayedCards: cards,
+        //         lastPattern: pattern,
+        //         cardPile: [...playedCards.cardPile, ...cards]
+        //     });
+        // }
+
+        setPlayedCards({
+            lastPlayedBy: player,
+            lastPlayedCards: cards,
+            lastPattern: pattern,
+            cardPile: [...playedCards.cardPile, ...cards]
+        });
         setDecks(deck);
         displayAlert('play', player, cards);
     }
@@ -164,22 +172,37 @@ const CompHands = ({
     };
 
     useEffect(() => {
-        if (currentPlayer !== null) {
+        console.log('inside comp: ', currentPlayer);
+        if (currentPlayer !== null && currentPlayer > 0) {
             console.log('comp: ', currentPlayer);
             console.log('COMP END GAME 1');
             // skip computer turn if their hand is empty
-            if (currentPlayer > 0 && decks[currentPlayer].length === 0) {
+            if (decks[currentPlayer].length === 0) {
                 changePlayerTurn();
-            } 
-            else if (currentPlayer > 0) {
+            } else {
                 setTimeout(() => {
-                    playCompHand();  
-                }, 2000);
+                    playCompHand(); 
+                }, 1000);
             } 
-        } else {
-            console.log('COMP END GAME 2');
         }
     },[currentPlayer]);
+
+    useEffect(() => {
+        setCurrentPlayer(null);
+    },[currentPlayer, endGame]);
+
+    // if (currentPlayer > 0) {
+    //     console.log('comp: ', currentPlayer);
+    //     console.log('COMP END GAME 1');
+    //     // skip computer turn if their hand is empty
+    //     if (decks[currentPlayer].length === 0) {
+    //         changePlayerTurn();
+    //     } else {
+    //         setTimeout(() => {
+    //             playCompHand();  
+    //         }, 2000);
+    //     }
+    // }
 
     return (
         <div className='compHands-container'>
