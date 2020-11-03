@@ -147,21 +147,6 @@ const App = () => {
         return decks;
     };
 
-    const stopGame = () => {
-        // find the last player that still has cards
-        decks.forEach((deck, i) => {
-            if (deck.length > 0) {
-                // add them placing array
-                const places = [...placing];
-                places.push(i);
-                setPlacing(places);
-            }
-        });
-
-        // set endgame to true to allow placing board to show
-        setEndGame(true);
-    };
-
     const checkPlacing = (hand) => {
         if (hand.length === 0) {
             let placeCopy = [...placing];
@@ -178,14 +163,14 @@ const App = () => {
         }
     };
 
-    function updatePlayedCards(player, cards, pattern) {
-        setPlayedCards({
-            lastPlayedBy: player,
-            lastPlayedCards: cards,
-            lastPattern: pattern,
-            cardPile: [...playedCards.cardPile, ...cards]
-        });
-    };
+    // function updatePlayedCards(player, cards, pattern) {
+    //     setPlayedCards({
+    //         lastPlayedBy: player,
+    //         lastPlayedCards: cards,
+    //         lastPattern: pattern,
+    //         cardPile: [...playedCards.cardPile, ...cards]
+    //     });
+    // };
 
     // used to start the game
     useEffect(() => {
@@ -214,9 +199,20 @@ const App = () => {
     // used to stop game if there's three finishes
     useEffect(() => {
         if (placing.length === 3) {
-            // set currentplayer to null to stop turns
-            setCurrentPlayer(null);
-            console.log('setting current player to null: ', currentPlayer);
+            const stopGame = () => {
+                // find the last player that still has cards
+                decks.forEach((deck, i) => {
+                    if (deck.length > 0) {
+                        // add them placing array
+                        const places = [...placing];
+                        places.push(i);
+                        setPlacing(places);
+                    }
+                });
+        
+                // set endgame to true to allow placing board to show
+                setEndGame(true);
+            };
 
             // if three people have finished, show placing board
             stopGame();
@@ -231,13 +227,15 @@ const App = () => {
                         decks={decks}
                         setDecks={setDecks}
                         playedCards={playedCards}
-                        updatePlayedCards={updatePlayedCards}
+                        setPlayedCards={setPlayedCards}
                         currentPlayer={currentPlayer}
                         displayAlert={displayAlert}
                         changePlayerTurn={changePlayerTurn}
                         passTurn={passTurn}
                         openPlay={openPlay}
                         setOpenPlay={setOpenPlay}
+                        endGame={endGame}
+                        setCurrentPlayer={setCurrentPlayer}
                     />
                 }
                 { isDealing === true ? 'Dealing cards...' : 
@@ -253,6 +251,8 @@ const App = () => {
                         passTurn={passTurn}
                         openPlay={openPlay}
                         setOpenPlay={setOpenPlay}
+                        endGame={endGame}
+                        setCurrentPlayer={setCurrentPlayer}
                     />
                 }
                 {playedCards.lastPlayedCards.length === 0 ? 'Loading' : <PlayedCardsPile pile={playedCards.lastPlayedCards} />}
