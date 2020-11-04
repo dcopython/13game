@@ -47,6 +47,11 @@ describe('4 or more cards', () => {
         expect(multiplePatternCheck(input)).toEqual('straight');
     });
 
+    it('returns true for valid 3+ card straight', () => {
+        const input = ['JH', '10C', '9C', '8C'];
+        expect(multiplePatternCheck(input)).toEqual('straight');
+    });
+
     it('returns false for mismatched 3+ card straight', () => {
         const input = ['3C', '4H', '5C', '7S', '8D'];
         expect(multiplePatternCheck(input)).toEqual(false);
