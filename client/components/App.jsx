@@ -234,8 +234,6 @@ const App = () => {
                         passTurn={passTurn}
                         openPlay={openPlay}
                         setOpenPlay={setOpenPlay}
-                        endGame={endGame}
-                        setCurrentPlayer={setCurrentPlayer}
                     />
                 }
                 { isDealing === true ? 'Dealing cards...' : 
@@ -251,18 +249,17 @@ const App = () => {
                         passTurn={passTurn}
                         openPlay={openPlay}
                         setOpenPlay={setOpenPlay}
-                        endGame={endGame}
-                        setCurrentPlayer={setCurrentPlayer}
                     />
                 }
                 {playedCards.lastPlayedCards.length === 0 ? 'Loading' : <PlayedCardsPile pile={playedCards.lastPlayedCards} />}
             </div>
             <div className='boards'>
-                <MessageBoard 
+                { endGame === false ? <MessageBoard 
                     currentPlayer={currentPlayer} 
                     alertMsg={alertMsg} 
                     setAlertMsg={setAlertMsg} 
-                />
+                /> : <div>Game Over!</div>
+                }
                 <PlacingBoard endGame={endGame} placing={placing} />
             </div>
         </div>
