@@ -13,7 +13,7 @@ const PlayerHand = ({
     displayAlert,
     passTurn,
     openPlay,
-    setOpenPlay,
+    setOpenPlay
     }) => {
     const [selectedCards, setSelectedCards] = useState([]);
     const [resetHand, setResetHand] = useState(false);
@@ -132,11 +132,13 @@ const PlayerHand = ({
     };
 
     useEffect(() => {
-        // skip player 1's turn if their hand is empty
-        if (decks[0].length === 0 && currentPlayer === 0) {
-            changePlayerTurn();
-        } else if (currentPlayer === 0) {
-            setResetHand(false);
+        if (currentPlayer !== null && currentPlayer === 0) {
+            // skip player 1's turn if their hand is empty
+            if (decks[0].length === 0) {
+                changePlayerTurn();
+            } else {
+                setResetHand(false);
+            }
         }
     }, [currentPlayer]);
 

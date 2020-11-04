@@ -28,22 +28,28 @@ const CompHands = ({
             hand.splice(index, 1);
         };
 
-        if (pattern === 'single') {
-            setPlayedCards({
-                lastPlayedBy: player,
-                lastPlayedCards: cards,
-                lastPattern: pattern,
-                cardPile: [...playedCards.cardPile, ...cards]
-            });
-        } else {
-            setPlayedCards({
-                lastPlayedBy: player,
-                lastPlayedCards: cards,
-                lastPattern: pattern,
-                cardPile: [...playedCards.cardPile, ...cards]
-            });
-        }
-        
+        // if (pattern === 'single') {
+        //     setPlayedCards({
+        //         lastPlayedBy: player,
+        //         lastPlayedCards: cards,
+        //         lastPattern: pattern,
+        //         cardPile: [...playedCards.cardPile, ...cards]
+        //     });
+        // } else {
+        //     setPlayedCards({
+        //         lastPlayedBy: player,
+        //         lastPlayedCards: cards,
+        //         lastPattern: pattern,
+        //         cardPile: [...playedCards.cardPile, ...cards]
+        //     });
+        // }
+
+        setPlayedCards({
+            lastPlayedBy: player,
+            lastPlayedCards: cards,
+            lastPattern: pattern,
+            cardPile: [...playedCards.cardPile, ...cards]
+        });
         setDecks(deck);
         displayAlert('play', player, cards);
     }
@@ -114,8 +120,6 @@ const CompHands = ({
                 // look through result array to see if there's any combos that beat old value
                 const currentValue = sortedResult.reduce((highest, cards, i) => {
                     let total = 0;
-
-                    console.log('cards: ', cards);
     
                     if (highest[0] > valueToBeat) {
                         return highest;
@@ -125,7 +129,6 @@ const CompHands = ({
                         } else if (pattern === 'straight') {
                             total += checkCardValue(cards);
                             highest[0] += total;
-                            console.log('scores: ', total, i);
                             return highest;
                         } else {
                             cards.forEach((card) => {
@@ -167,16 +170,17 @@ const CompHands = ({
     };
 
     useEffect(() => {
-        // skip computer turn if their hand is empty
-        if (currentPlayer > 0 && decks[currentPlayer].length === 0) {
-            changePlayerTurn();
-        } 
-        else if (currentPlayer > 0) {
-            setTimeout(() => {
-                playCompHand();  
-            }, 2000);
-        } 
-    },[currentPlayer])
+        if (currentPlayer !== null && currentPlayer > 0) {
+            // skip computer turn if their hand is empty
+            if (decks[currentPlayer].length === 0) {
+                changePlayerTurn();
+            } else {
+                setTimeout(() => {
+                    playCompHand(); 
+                }, 1000);
+            } 
+        }
+    },[currentPlayer]);
 
     return (
         <div className='compHands-container'>
