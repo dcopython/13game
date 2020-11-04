@@ -9,13 +9,11 @@ const CompHands = ({
     playedCards,
     setPlayedCards,
     currentPlayer,
-    setCurrentPlayer,
     displayAlert,
     changePlayerTurn,
     passTurn,
     openPlay,
-    setOpenPlay,
-    endGame
+    setOpenPlay
     }) => {
     // plays the lowest card in the computer's hand
     const playCards = (deck, player, cards, pattern) => {
@@ -172,10 +170,7 @@ const CompHands = ({
     };
 
     useEffect(() => {
-        console.log('inside comp: ', currentPlayer);
         if (currentPlayer !== null && currentPlayer > 0) {
-            console.log('comp: ', currentPlayer);
-            console.log('COMP END GAME 1');
             // skip computer turn if their hand is empty
             if (decks[currentPlayer].length === 0) {
                 changePlayerTurn();
@@ -186,23 +181,6 @@ const CompHands = ({
             } 
         }
     },[currentPlayer]);
-
-    useEffect(() => {
-        setCurrentPlayer(null);
-    },[currentPlayer, endGame]);
-
-    // if (currentPlayer > 0) {
-    //     console.log('comp: ', currentPlayer);
-    //     console.log('COMP END GAME 1');
-    //     // skip computer turn if their hand is empty
-    //     if (decks[currentPlayer].length === 0) {
-    //         changePlayerTurn();
-    //     } else {
-    //         setTimeout(() => {
-    //             playCompHand();  
-    //         }, 2000);
-    //     }
-    // }
 
     return (
         <div className='compHands-container'>
