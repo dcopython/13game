@@ -95,6 +95,8 @@ const CompHands = ({
                 }
             } else {
                 const sortedResult = result.sort((a, b) => {
+                    console.log('a', a);
+                    console.log('b', b);
                     if (pattern !== 'single') {
                         let totalA = 0;
                         let totalB = 0;
